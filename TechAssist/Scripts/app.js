@@ -16,12 +16,24 @@ var LabelController = (function () {
         this.lastName = lastName;
         this.barcode = barcode;
         this.labelSpot = labelSpot;
-    }
+    };
+    /*
+     * School Object
+     */
+    var School = function (schoolId, schoolName, schoolAcronym, schoolPhone, schoolPictureUrl) {
+        this.schoolId = schoolId;
+        this.schoolName = schoolName;
+        this.schoolAcronym = schoolAcronym;
+        this.schoolPhone = schoolPhone;
+        this.schoolPictureUrl = schoolPictureUrl;
+    };
+
     /*
      * Array that stores all label data
      */
     var data = {
-        labels: []
+        labels: [],
+        schools: []
     };
 
     return {
@@ -30,10 +42,8 @@ var LabelController = (function () {
          */ 
         addItem: function (schoolId, firstName, lastName, barcode, labelSpot) {
 
-            var newItem;
-
             // Create a new label object with supplied details
-            newItem = new Label(schoolId, firstName, lastName, barcode, labelSpot);
+            var newItem = new Label(schoolId, firstName, lastName, barcode, labelSpot);
 
             // Add the item to the data array
             data.labels.push(newItem);
@@ -61,6 +71,27 @@ var LabelController = (function () {
 
         testGetData: function () {
             return data;
+        },
+
+        addSchools: function (schools) {
+
+            for (school of schools) {
+
+                var newItem = new School(school["SchoolID"], school["SchoolName"], school["SchoolAcronym"], school["SchoolPhone"], school["SchoolPictureUrl"]);
+
+                data.schools.push(newItem);
+            }
+        },
+
+        getSchoolInfo: function (schoolId) {
+
+            for (var i = 0; i < data.schools.length; i++) {
+
+                if (data.schools[i].schoolId == schoolId) {
+
+                    return data.schools[i].schoolAcronym;
+                }
+            }
         }
     };
 })();
@@ -146,17 +177,18 @@ var UIController = (function () {
         /*
          *  Handle creating new HTML list element in the UI
          */ 
-        addListItem: function (obj) {
+        addListItem: function (obj, schoolAcronym) {
 
             var html, newHtml, container;
 
             container = "#" + DOMstrings.listContainer;
 
             // Initialize HTML for new table row
-            html = '<tr class="hover-view" id="labelrow-%labelSpot%"><td id="schoolacronym">%schoolId%</td><td id="firstname">%firstName%</td><td id="lastname">%lastName%</td><td id="barcode">%barcode%</td><td id="labelspot" style="text-align: center;">%labelSpot%</td><td style="text-align: center;"><span class="glyphicon glyphicon-pencil icon-hover" data-toggle="tooltip" data-placement="top" title="Edit Label" aria-hidden="true"></span><span class="glyphicon glyphicon-remove icon-hover" data-toggle="tooltip" data-placement="top" title="Remove Label" aria-hidden="true"></span></td></tr>';
+            html = '<tr class="hover-view" id="labelrow-%labelSpot%"><td id="schoolacronym">%schoolAcronym%</td><td id="firstname">%firstName%</td><td id="lastname">%lastName%</td><td id="barcode">%barcode%</td><td id="labelspot" style="text-align: center;">%labelSpot%</td><td style="text-align: center;"><span class="glyphicon glyphicon-pencil icon-hover" data-toggle="tooltip" data-placement="top" title="Edit Label" aria-hidden="true"></span><span class="glyphicon glyphicon-remove icon-hover" data-toggle="tooltip" data-placement="top" title="Remove Label" aria-hidden="true"></span></td></tr>';
 
             // Replace the "GET TERM HERE" for all required elements
             newHtml = html.replace(/%schoolId%/g, obj.schoolId);
+            newHtml = newHtml.replace(/%schoolAcronym%/g, schoolAcronym)
             newHtml = newHtml.replace(/%firstName%/g, obj.firstName);
             newHtml = newHtml.replace(/%lastName%/g, obj.lastName);
             newHtml = newHtml.replace(/%barcode%/g, obj.barcode);
@@ -237,7 +269,7 @@ var controller = (function (LabelCtrl, DBCtrl, UICtrl) {
         // Update the database
 
         // Add item to the UI
-        UICtrl.addListItem(newItem);
+        UICtrl.addListItem(newItem, LabelCtrl.getSchoolInfo(input.schoolId));
 
         // Clear and update input fields
         UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
@@ -251,6 +283,18 @@ var controller = (function (LabelCtrl, DBCtrl, UICtrl) {
             DBCtrl.establishDB();
             // 1. Grab all existing data from DB and populate list and label preview
             setupEventListeners();
+
+            var xmlhttp = new XMLHttpRequest();
+            var url = "label/schoolsinfo";
+
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var responseArr = JSON.parse(this.responseText);
+                    LabelCtrl.addSchools(responseArr);
+                }
+            };
+            xmlhttp.open("GET", url, true);
+            xmlhttp.send();
         }
     };
 })(LabelController, DBController, UIController);
