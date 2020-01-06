@@ -14,5 +14,10 @@ Public Module RouteConfig
             url:="{controller}/{action}/{id}",
             defaults:=New With {.controller = "Label", .action = "Index", .id = UrlParameter.Optional}
         )
+
+        routes.MapRoute(
+            name:="Jquery",
+            url:="Label/SchoolsInfo",
+            defaults:=New With {.controller = "Label", .action = "SchoolsInfo"})
     End Sub
 End Module

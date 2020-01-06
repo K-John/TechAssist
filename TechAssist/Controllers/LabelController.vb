@@ -29,6 +29,14 @@ Namespace Controllers
             Return PartialView()
         End Function
 
+        ' GET: JSON School List
+        Function SchoolsInfo() As ActionResult
+            Dim LSVM As New LabelSchoolViewModel()
+            LSVM.SchoolModel = GetSchools()
+
+            Return Json(LSVM.SchoolModel, JsonRequestBehavior.AllowGet)
+        End Function
+
         ' Return a List of SchoolModel format schools
         Function GetSchools()
 
