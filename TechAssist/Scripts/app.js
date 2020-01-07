@@ -106,25 +106,60 @@ var LabelController = (function () {
 var DBController = (function () {
 
     var db;
+    var objectStoreName = "labels";
 
     return {
 
         establishDB: function () {
-            var openRequest = indexedDB.open('test-db1', 1);
+            var openRequest = indexedDB.open('test-db1', 2);
 
             openRequest.onerror = function () {
                 // Open UIController Alert method and throw error:
                 // "IndexedDB is not supported by your browser, this application may not work correctly."
                 console.log("Error:" + openRequest.error);
                 return;
-            }
+            };
 
             openRequest.onsuccess = function () {
                 db = openRequest.result;
                 console.log("DB Connection established.");
                 return true;
+            };
+
+            openRequest.onupgradeneeded = function () {
+                db = openRequest.result;
+                console.log("DB Upgrade Needed");
+                db.createObjectStore(objectStoreName, { keyPath: 'id', autoIncrement: true });
+            }
+        },
+
+        addToDB: function (item) {
+
+            var transaction = db.transaction(objectStoreName, "readwrite");
+            var labelStore = transaction.objectStore(objectStoreName);
+            // SET THE KEY AS THE LABEL SPOT ID!!!!! SO We CAN MORE EASILY GET AND UPDATE
+            var request = labelStore.add(item);
+
+            request.onsuccess = function () {
+                console.log("Label added to DB", request.result);
+            };
+
+            request.onerror = function () {
+                console.log("Error adding label to DB", request.error);
+            };
+        },
+
+        testGetData: function () {
+
+            var transaction = db.transaction(objectStoreName, "readwrite");
+            var labelStore = transaction.objectStore(objectStoreName);
+            var labels = labelStore.getAll();
+
+            labels.onsuccess = function () {
+                console.log(labels.result);
             }
         }
+
     };
 })();
 
@@ -267,6 +302,7 @@ var controller = (function (LabelCtrl, DBCtrl, UICtrl) {
         }
 
         // Update the database
+        DBCtrl.addToDB(newItem);
 
         // Add item to the UI
         UICtrl.addListItem(newItem, LabelCtrl.getSchoolInfo(input.schoolId));
