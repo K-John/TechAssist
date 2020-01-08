@@ -1,8 +1,6 @@
 ﻿/*
  * ~ * ~ * ~   Label Controller   ~ * ~ * ~ *
  *  
- *  
- * ~ * ~ * ~                      ~ * ~ * ~ *
  */
 
 var LabelController = (function () {
@@ -83,7 +81,7 @@ var LabelController = (function () {
             }
         },
 
-        getSchoolInfo: function (schoolId) {
+        getSchoolAcronym: function (schoolId) {
 
             for (var i = 0; i < data.schools.length; i++) {
 
@@ -100,7 +98,6 @@ var LabelController = (function () {
  * ~ * ~ * ~ Database Controller ~ * ~ * ~ *
  *  Establishes connection to IndexedDB
  *  Stores/retrieves/removes Label data
- * ~ * ~ * ~                     ~ * ~ * ~ *
  */
 
 var DBController = (function () {
@@ -110,42 +107,37 @@ var DBController = (function () {
 
     return {
 
-        establishDB: function () {
-            var openRequest = indexedDB.open('test-db1', 2);
+        establishDB: function (callback) {
+            var openRequest = indexedDB.open('test-db0', 1);
 
             openRequest.onerror = function () {
-                // Open UIController Alert method and throw error:
-                // "IndexedDB is not supported by your browser, this application may not work correctly."
-                console.log("Error:" + openRequest.error);
-                return;
+                callback(false, openRequest.error);
             };
 
             openRequest.onsuccess = function () {
                 db = openRequest.result;
-                console.log("DB Connection established.");
-                return true;
+                callback(true);
             };
 
             openRequest.onupgradeneeded = function () {
                 db = openRequest.result;
                 console.log("DB Upgrade Needed");
-                db.createObjectStore(objectStoreName, { keyPath: 'id', autoIncrement: true });
+                db.createObjectStore(objectStoreName);
             }
         },
 
-        addToDB: function (item) {
+        addToDB: function (item, id, callback) {
 
             var transaction = db.transaction(objectStoreName, "readwrite");
             var labelStore = transaction.objectStore(objectStoreName);
-            // SET THE KEY AS THE LABEL SPOT ID!!!!! SO We CAN MORE EASILY GET AND UPDATE
-            var request = labelStore.add(item);
+            var request = labelStore.add(item, id);
 
             request.onsuccess = function () {
-                console.log("Label added to DB", request.result);
+                callback(true, request.result);
             };
 
             request.onerror = function () {
-                console.log("Error adding label to DB", request.error);
+                callback(false, request.error);
             };
         },
 
@@ -157,7 +149,11 @@ var DBController = (function () {
 
             labels.onsuccess = function () {
                 console.log(labels.result);
-            }
+            };
+
+            labels.onerror = function () {
+                console.log("Error", labels.error);
+            };
         }
 
     };
@@ -165,9 +161,6 @@ var DBController = (function () {
 
 /*
  * ~ * ~ * ~ User Interface Controller ~ * ~ * ~ *
- *  
- *  
- * ~ * ~ * ~                           ~ * ~ * ~ *
  */
 
 var UIController = (function () {
@@ -260,10 +253,7 @@ var UIController = (function () {
 
 /*
  * ~ * ~ * ~ Application Controller ~ * ~ * ~ *
- *  
  *  Interfaces all connections between controllers
- *  
- * ~ * ~ * ~                        ~ * ~ * ~ *
  */
 
 var controller = (function (LabelCtrl, DBCtrl, UICtrl) {
@@ -302,10 +292,19 @@ var controller = (function (LabelCtrl, DBCtrl, UICtrl) {
         }
 
         // Update the database
-        DBCtrl.addToDB(newItem);
+        // MAKE CHANGES SO THAT IF IT FAILS, IT DOES NOT UPDATE THE UI
+        DBCtrl.addToDB(newItem, input.labelSpot, function (result, err) {
+            if (!result) {
+                console.log("Error adding label to DB: ", err);
+            } else {
+                console.log("Label added to DB: ", err);
+            }
+        });
 
         // Add item to the UI
-        UICtrl.addListItem(newItem, LabelCtrl.getSchoolInfo(input.schoolId));
+        // TODO: Once pagination is complete, have a check here for if it should be added for the view.
+        //       If 
+        UICtrl.addListItem(newItem, LabelCtrl.getSchoolAcronym(input.schoolId));
 
         // Clear and update input fields
         UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
@@ -316,7 +315,13 @@ var controller = (function (LabelCtrl, DBCtrl, UICtrl) {
     return {
         init: function () {
             console.log("The application has started.");
-            DBCtrl.establishDB();
+            DBCtrl.establishDB(function (result, err) {
+                if (!result) {
+                    console.log("Error connection to DB: ", err);
+                } else {
+                    console.log("DB Connection Established")
+                }
+            });
             // 1. Grab all existing data from DB and populate list and label preview
             setupEventListeners();
 
