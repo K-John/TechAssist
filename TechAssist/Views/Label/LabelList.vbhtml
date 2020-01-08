@@ -1,8 +1,8 @@
 ﻿<h4>Current List</h4>
 <div class="form-horizontal">
     <table class="table table-hover">
-        <tbody id="listcontainer">
-            <tr>
+        <tbody>
+            <tr id="listcontainer">
                 <th>School</th>
                 <th>First</th>
                 <th>Last</th>

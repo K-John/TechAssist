@@ -90,6 +90,10 @@ var LabelController = (function () {
                     return data.schools[i].schoolAcronym;
                 }
             }
+        },
+        // TODO: May not need this function?
+        getLabelCount: function () {
+            return data.labels.length;
         }
     };
 })();
@@ -165,6 +169,8 @@ var DBController = (function () {
 
 var UIController = (function () {
 
+    var UILabelCount = 0;
+
     var DOMstrings = {
         inputSchoolId: 'SchoolId',
         inputFirstName: 'LabelModel_FirstName',
@@ -223,7 +229,8 @@ var UIController = (function () {
             newHtml = newHtml.replace(/%labelSpot%/g, obj.labelSpot);
 
             // Insert table row at the end of the list
-            document.querySelector(container).insertAdjacentHTML('beforeend', newHtml);
+            document.querySelector(container).insertAdjacentHTML('afterend', newHtml);
+            UILabelCount++;
         },
         /*
          * Clear Input Fields and set Input form up for new label
@@ -247,6 +254,9 @@ var UIController = (function () {
 
             //Set focus to first name
             fieldsArray[0].focus();
+        },
+        getUILabelCount: function () {
+            return UILabelCount;
         }
     };
 })();
@@ -261,7 +271,7 @@ var controller = (function (LabelCtrl, DBCtrl, UICtrl) {
     var setupEventListeners = function () {
         var DOM = UICtrl.getDOMstrings();
 
-        document.querySelector("#" + DOM.inputSubmit).addEventListener('click', ctrlAddLabel);
+        document.querySelector("#" + DOM.inputSubmit).addEventListener('click', validateInput);
 
         document.addEventListener('keypress', function (event) {
 
@@ -273,27 +283,16 @@ var controller = (function (LabelCtrl, DBCtrl, UICtrl) {
                     || document.activeElement === document.getElementById(DOM.inputBarcode)
                     || document.activeElement === document.getElementById(DOM.inputLabelSpot)))
             {
-                ctrlAddLabel();
+                validateInput();
             }
         });
     };
 
-    var ctrlAddLabel = function () {
-
-        var input, newItem;
-
-        // Get the input field data
-        input = UICtrl.getInput();
-
-        // Add item to the label controller
-        if (input.schoolId !== "" && input.firstName !== "" && input.lastName !== "" && input.barcode !== "" && input.labelSpot !== "") {
-
-            newItem = LabelCtrl.addItem(input.schoolId, input.firstName, input.lastName, input.barcode, input.labelSpot);
-        }
+    var handleAddLabel = function (newItem) {
 
         // Update the database
         // MAKE CHANGES SO THAT IF IT FAILS, IT DOES NOT UPDATE THE UI
-        DBCtrl.addToDB(newItem, input.labelSpot, function (result, err) {
+        DBCtrl.addToDB(newItem, newItem.labelSpot, function (result, err) {
             if (!result) {
                 console.log("Error adding label to DB: ", err);
             } else {
@@ -304,13 +303,27 @@ var controller = (function (LabelCtrl, DBCtrl, UICtrl) {
         // Add item to the UI
         // TODO: Once pagination is complete, have a check here for if it should be added for the view.
         //       If 
-        UICtrl.addListItem(newItem, LabelCtrl.getSchoolAcronym(input.schoolId));
+        UICtrl.addListItem(newItem, LabelCtrl.getSchoolAcronym(newItem.schoolId));
 
         // Clear and update input fields
         UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
 
         //
-    }
+    };
+
+    var validateInput = function () {
+
+        // Get the input field data
+        var input = UICtrl.getInput();
+
+        // Add item to the label controller
+        if (input.schoolId !== "" && input.firstName !== "" && input.lastName !== "" && input.barcode !== "" && input.labelSpot !== "") {
+
+            handleAddLabel(LabelCtrl.addItem(input.schoolId, input.firstName, input.lastName, input.barcode, input.labelSpot));
+        } else {
+            return false;
+        }
+    };
 
     return {
         init: function () {
