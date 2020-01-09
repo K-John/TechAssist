@@ -171,7 +171,7 @@ var UIController = (function () {
 
     var UILabelCount = 0;
     var expandListCount = 1;
-    var expandListThreshhold = 3;
+    var expandListThreshhold = 2;
     var expandListStatus = false;
 
     var DOMstrings = {
@@ -189,7 +189,8 @@ var UIController = (function () {
         listClear: 'clear',
         listContainer: 'listcontainer',
         listRow: 'labelrow',
-        previewLabel: 'labelpreview'
+        previewLabel: 'labelpreview',
+        expandList: 'expandlist'
     };
 
     return {
@@ -259,20 +260,33 @@ var UIController = (function () {
             fieldsArray[0].focus();
         },
 
+        handleExpandingList: function (labelCount) {
+
+            //Remove End Label from UI
+            if (UILabelCount > (expandListCount * expandListThreshhold)) {
+
+                var lastLabelId = document.getElementById(DOMstrings.listContainer).parentElement.lastElementChild.id;
+                document.getElementById(lastLabelId).remove();
+                UILabelCount--;
+            }
+
+            //Toggle on "See More" button
+            if (!expandListStatus && (labelCount > UILabelCount)) {
+
+                document.getElementById(DOMstrings.expandList).textContent = "See More";
+                expandListStatus = true;
+            }
+
+            //Toggle off "See More" button
+            if (expandListStatus && (labelCount <= UILabelCount)) {
+
+                document.getElementById(DOMstrings.expandList).textContent = "";
+                expandListStatus = false;
+            }
+        },
+
         getUILabelCount: function () {
             return UILabelCount;
-        },
-
-        getExpandListCount: function () {
-            return expandListCount;
-        },
-
-        getExpandListStatus: function () {
-            return expandListStatus;
-        },
-
-        getExpandListThreshhold: function () {
-            return expandListThreshhold;
         }
     };
 })();
@@ -341,19 +355,11 @@ var controller = (function (LabelCtrl, DBCtrl, UICtrl) {
                 console.log("Label added to DB: ", err);
             }
         });
-        console.log("LabelCount: ", UICtrl.getUILabelCount());
 
         // Add item to the UI
         UICtrl.addListItem(newItem, LabelCtrl.getSchoolAcronym(newItem.schoolId));
 
-        //Check if UILabelCount is greater than expandListCount * expandListThreshhold
-        if (UICtrl.getUILabelCount() > (UICtrl.getExpandListCount() * UICtrl.getExpandListThreshhold())) {
-            console.log("Threshhold breached!!");
-            //Run a UI function to handle expanding list or maybe to remove the label, then 
-            //Run a UI function to remove the label, then handle the expanding list
-
-            //In that function 
-        }
+        UICtrl.handleExpandingList(LabelController.getLabelCount());
 
         // Clear and update input fields
         UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
