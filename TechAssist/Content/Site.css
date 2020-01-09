@@ -86,3 +86,9 @@ textarea {
 .icon-hover:hover {
     color: #ff0000;
 }
+
+.expandlist {
+    text-align: center;
+    text-decoration: underline;
+    cursor: pointer;
+}

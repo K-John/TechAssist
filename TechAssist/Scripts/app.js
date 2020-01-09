@@ -170,6 +170,9 @@ var DBController = (function () {
 var UIController = (function () {
 
     var UILabelCount = 0;
+    var expandListCount = 1;
+    var expandListThreshhold = 3;
+    var expandListStatus = false;
 
     var DOMstrings = {
         inputSchoolId: 'SchoolId',
@@ -255,8 +258,21 @@ var UIController = (function () {
             //Set focus to first name
             fieldsArray[0].focus();
         },
+
         getUILabelCount: function () {
             return UILabelCount;
+        },
+
+        getExpandListCount: function () {
+            return expandListCount;
+        },
+
+        getExpandListStatus: function () {
+            return expandListStatus;
+        },
+
+        getExpandListThreshhold: function () {
+            return expandListThreshhold;
         }
     };
 })();
@@ -288,27 +304,18 @@ var controller = (function (LabelCtrl, DBCtrl, UICtrl) {
         });
     };
 
-    var handleAddLabel = function (newItem) {
+    var getAPIInfo = function () {
 
-        // Update the database
-        // MAKE CHANGES SO THAT IF IT FAILS, IT DOES NOT UPDATE THE UI
-        DBCtrl.addToDB(newItem, newItem.labelSpot, function (result, err) {
-            if (!result) {
-                console.log("Error adding label to DB: ", err);
-            } else {
-                console.log("Label added to DB: ", err);
+        var xmlhttp = new XMLHttpRequest();
+        var url = "label/schoolsinfo";
+        xmlhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var responseArr = JSON.parse(this.responseText);
+                LabelCtrl.addSchools(responseArr);
             }
-        });
-
-        // Add item to the UI
-        // TODO: Once pagination is complete, have a check here for if it should be added for the view.
-        //       If 
-        UICtrl.addListItem(newItem, LabelCtrl.getSchoolAcronym(newItem.schoolId));
-
-        // Clear and update input fields
-        UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
-
-        //
+        };
+        xmlhttp.open("GET", url, true);
+        xmlhttp.send();
     };
 
     var validateInput = function () {
@@ -325,9 +332,39 @@ var controller = (function (LabelCtrl, DBCtrl, UICtrl) {
         }
     };
 
+    var handleAddLabel = function (newItem) {
+
+        DBCtrl.addToDB(newItem, newItem.labelSpot, function (result, err) {
+            if (!result) {
+                console.log("Error adding label to DB: ", err);
+            } else {
+                console.log("Label added to DB: ", err);
+            }
+        });
+        console.log("LabelCount: ", UICtrl.getUILabelCount());
+
+        // Add item to the UI
+        UICtrl.addListItem(newItem, LabelCtrl.getSchoolAcronym(newItem.schoolId));
+
+        //Check if UILabelCount is greater than expandListCount * expandListThreshhold
+        if (UICtrl.getUILabelCount() > (UICtrl.getExpandListCount() * UICtrl.getExpandListThreshhold())) {
+            console.log("Threshhold breached!!");
+            //Run a UI function to handle expanding list or maybe to remove the label, then 
+            //Run a UI function to remove the label, then handle the expanding list
+
+            //In that function 
+        }
+
+        // Clear and update input fields
+        UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
+    };
+
     return {
         init: function () {
-            console.log("The application has started.");
+
+            setupEventListeners();
+            getAPIInfo();
+
             DBCtrl.establishDB(function (result, err) {
                 if (!result) {
                     console.log("Error connection to DB: ", err);
@@ -335,20 +372,6 @@ var controller = (function (LabelCtrl, DBCtrl, UICtrl) {
                     console.log("DB Connection Established")
                 }
             });
-            // 1. Grab all existing data from DB and populate list and label preview
-            setupEventListeners();
-
-            var xmlhttp = new XMLHttpRequest();
-            var url = "label/schoolsinfo";
-
-            xmlhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    var responseArr = JSON.parse(this.responseText);
-                    LabelCtrl.addSchools(responseArr);
-                }
-            };
-            xmlhttp.open("GET", url, true);
-            xmlhttp.send();
         }
     };
 })(LabelController, DBController, UIController);

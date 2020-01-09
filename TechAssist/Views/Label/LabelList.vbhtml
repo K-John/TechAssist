@@ -23,9 +23,13 @@
         </tbody>
     </table>
     <div class="form-group">
-        <div class="col-md-10">
-            <input type="submit" value="Export List to Label Sheet" class="btn btn-primary" id="export" />
-            <input type="submit" value="Clear List" class="btn" id="clear" />
+        <div class="row">
+            <div class="col-md-12"><p class="expandlist" id="expandlist">See More</p></div>
+            <div class="col-md-9">
+                <input type="submit" value="Export List to Label Sheet" class="btn btn-primary" id="export" />
+                <input type="submit" value="Clear List" class="btn" id="clear" />
+            </div>
+            <div class="col-md-3"><span style="font-weight: bold">Label Count:</span> <span id="labelcount">8</span></div>
         </div>
     </div>
 </div>
