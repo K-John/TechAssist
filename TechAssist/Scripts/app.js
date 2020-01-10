@@ -94,6 +94,10 @@ var LabelController = (function () {
         // TODO: May not need this function?
         getLabelCount: function () {
             return data.labels.length;
+        },
+
+        getLabel: function (i) {
+            return data.labels[i];
         }
     };
 })();
@@ -190,7 +194,9 @@ var UIController = (function () {
         listContainer: 'listcontainer',
         listRow: 'labelrow',
         previewLabel: 'labelpreview',
-        expandList: 'expandlist'
+        expandList: 'expandlist',
+        labelCount: 'labelcount',
+        alertContainer: 'alertcontainer'
     };
 
     return {
@@ -215,16 +221,13 @@ var UIController = (function () {
         /*
          *  Handle creating new HTML list element in the UI
          */ 
-        addListItem: function (obj, schoolAcronym) {
+        addListItem: function (obj, schoolAcronym, position) {
 
-            var html, newHtml, container;
+            var html, newHtml;
 
-            container = "#" + DOMstrings.listContainer;
+            var container = "#" + DOMstrings.listContainer;
 
-            // Initialize HTML for new table row
             html = '<tr class="hover-view" id="labelrow-%labelSpot%"><td id="schoolacronym">%schoolAcronym%</td><td id="firstname">%firstName%</td><td id="lastname">%lastName%</td><td id="barcode">%barcode%</td><td id="labelspot" style="text-align: center;">%labelSpot%</td><td style="text-align: center;"><span class="glyphicon glyphicon-pencil icon-hover" data-toggle="tooltip" data-placement="top" title="Edit Label" aria-hidden="true"></span><span class="glyphicon glyphicon-remove icon-hover" data-toggle="tooltip" data-placement="top" title="Remove Label" aria-hidden="true"></span></td></tr>';
-
-            // Replace the "GET TERM HERE" for all required elements
             newHtml = html.replace(/%schoolId%/g, obj.schoolId);
             newHtml = newHtml.replace(/%schoolAcronym%/g, schoolAcronym)
             newHtml = newHtml.replace(/%firstName%/g, obj.firstName);
@@ -232,8 +235,11 @@ var UIController = (function () {
             newHtml = newHtml.replace(/%barcode%/g, obj.barcode);
             newHtml = newHtml.replace(/%labelSpot%/g, obj.labelSpot);
 
-            // Insert table row at the end of the list
-            document.querySelector(container).insertAdjacentHTML('afterend', newHtml);
+            if (position == 0) {
+                document.querySelector(container).insertAdjacentHTML('afterend', newHtml);
+            } else if (position == 1) {
+                document.querySelector(container).parentElement.insertAdjacentHTML('beforeend', newHtml);
+            }
             UILabelCount++;
         },
         /*
@@ -287,12 +293,20 @@ var UIController = (function () {
             }
         },
 
+        setLabelCount: function (count) {
+            document.getElementById(DOMstrings.labelCount).textContent = count;
+        },
+
         getUILabelCount: function () {
             return UILabelCount;
         },
 
         getExpandListThreshhold: function () {
             return expandListThreshhold;
+        },
+
+        addExpandingListCount: function () {
+            expandListCount++;
         }
     };
 })();
@@ -364,9 +378,9 @@ var controller = (function (LabelCtrl, DBCtrl, UICtrl) {
         });
 
         // Add item to the UI
-        UICtrl.addListItem(newItem, LabelCtrl.getSchoolAcronym(newItem.schoolId));
-
-        UICtrl.handleExpandingList(LabelController.getLabelCount());
+        UICtrl.addListItem(newItem, LabelCtrl.getSchoolAcronym(newItem.schoolId), 0);
+        UICtrl.handleExpandingList(LabelCtrl.getLabelCount());
+        UICtrl.setLabelCount(LabelCtrl.getLabelCount());
 
         // Clear and update input fields
         UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
@@ -374,16 +388,18 @@ var controller = (function (LabelCtrl, DBCtrl, UICtrl) {
 
     var expandList = function () {
 
-        //Get UILabelcount, LabelCount, and threshhold
         var threshhold = UICtrl.getExpandListThreshhold();
+        var labelCount = LabelCtrl.getLabelCount();
 
-        var end = UICtrl.getUILabelCount() - LabelCtrl.getLabelCount();
-        var start = (threshhold - end <= 0) ? 1 : (threshhold - end);
+        var start = labelCount - UICtrl.getUILabelCount();
+        var end = (start - threshhold <= 0) ? 1 : (start - threshhold);
 
-        //Compare the labelcounts to get starting index, use expandListThreshhold to loop i up to
-
-
-        //Inside of the loop, get the labeldata and pass it to UI to add label to the end
+        for (i = start; i >= end; i--) {
+            var label = LabelCtrl.getLabel(i - 1);
+            UICtrl.addListItem(label, LabelCtrl.getSchoolAcronym(label.schoolId), 1);
+        }
+        UICtrl.addExpandingListCount();
+        UICtrl.handleExpandingList(labelCount);
     };
 
     return {

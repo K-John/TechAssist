@@ -5,6 +5,7 @@ End Code
 
 <h2>Student Label Assistant</h2>
 <hr />
+<div class="row" id="alertcontainer"></div>
 <div class="row">
     <div class="col-md-6">
         @Html.Action("AddLabel")

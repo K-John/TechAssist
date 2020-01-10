@@ -29,7 +29,7 @@
                 <input type="submit" value="Export List to Label Sheet" class="btn btn-primary" id="export" />
                 <input type="submit" value="Clear List" class="btn" id="clear" />
             </div>
-            <div class="col-md-3"><span style="font-weight: bold">Label Count:</span> <span id="labelcount">8</span></div>
+            <div class="col-md-3"><span style="font-weight: bold">Total Label(s):</span> <span id="labelcount">0</span></div>
         </div>
     </div>
 </div>
