@@ -265,6 +265,7 @@ var UIController = (function () {
             //Remove End Label from UI
             if (UILabelCount > (expandListCount * expandListThreshhold)) {
 
+                //TODO: Change it to one line of code to remove? No need to instantiate a new variable for this?
                 var lastLabelId = document.getElementById(DOMstrings.listContainer).parentElement.lastElementChild.id;
                 document.getElementById(lastLabelId).remove();
                 UILabelCount--;
@@ -278,6 +279,7 @@ var UIController = (function () {
             }
 
             //Toggle off "See More" button
+            //TODO: I'm not sure this will ever be used in this function? I'm thinking it'll only be used when clicking on "See More". There's no cases I can think of otherwise.
             if (expandListStatus && (labelCount <= UILabelCount)) {
 
                 document.getElementById(DOMstrings.expandList).textContent = "";
@@ -287,6 +289,10 @@ var UIController = (function () {
 
         getUILabelCount: function () {
             return UILabelCount;
+        },
+
+        getExpandListThreshhold: function () {
+            return expandListThreshhold;
         }
     };
 })();
@@ -302,7 +308,6 @@ var controller = (function (LabelCtrl, DBCtrl, UICtrl) {
         var DOM = UICtrl.getDOMstrings();
 
         document.querySelector("#" + DOM.inputSubmit).addEventListener('click', validateInput);
-
         document.addEventListener('keypress', function (event) {
 
             // Pressing enter key in AddLabel section
@@ -316,6 +321,8 @@ var controller = (function (LabelCtrl, DBCtrl, UICtrl) {
                 validateInput();
             }
         });
+
+        document.querySelector("#" + DOM.expandList).addEventListener('click', expandList);
     };
 
     var getAPIInfo = function () {
@@ -363,6 +370,20 @@ var controller = (function (LabelCtrl, DBCtrl, UICtrl) {
 
         // Clear and update input fields
         UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
+    };
+
+    var expandList = function () {
+
+        //Get UILabelcount, LabelCount, and threshhold
+        var threshhold = UICtrl.getExpandListThreshhold();
+
+        var end = UICtrl.getUILabelCount() - LabelCtrl.getLabelCount();
+        var start = (threshhold - end <= 0) ? 1 : (threshhold - end);
+
+        //Compare the labelcounts to get starting index, use expandListThreshhold to loop i up to
+
+
+        //Inside of the loop, get the labeldata and pass it to UI to add label to the end
     };
 
     return {
