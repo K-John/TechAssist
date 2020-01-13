@@ -6,6 +6,9 @@ Public Module BundleConfig
 
         bundles.Add(New ScriptBundle("~/bundles/techassist").Include(
                     "~/Scripts/jquery-{version}.js",
+                    "~/Scripts/app-labelcontroller.js",
+                    "~/Scripts/app-dbcontroller.js",
+                    "~/Scripts/app-uicontroller.js",
                     "~/Scripts/app.js"))
 
         bundles.Add(New ScriptBundle("~/bundles/jquery").Include(

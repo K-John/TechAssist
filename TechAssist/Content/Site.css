@@ -23,6 +23,16 @@ textarea {
     max-width: 280px;
 }
 
+.alert {
+    margin-bottom: 10px;
+}
+
+.alert-icon {
+    font-size: 24px;
+    vertical-align: bottom;
+    padding-right: 10px;
+}
+
 /* Label Preview CSS */
 .label-page {
     margin: 5px;
