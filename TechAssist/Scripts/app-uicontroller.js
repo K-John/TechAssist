@@ -166,6 +166,18 @@
 
         addExpandingListCount: function () {
             expandListCount++;
+        },
+
+        // Get the input's title from the supplied element ID
+        addAlertError: function (field) {
+            document.getElementById(field).classList.add('has-error');
+
+            return document.getElementById(field).childNodes[1].textContent;
+        },
+
+        capFirstLetter: function (string) {
+
+            return string.replace(/^\w/, c => c.toUpperCase());
         }
     };
 })();

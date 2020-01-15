@@ -91,6 +91,26 @@
 
         getLabel: function (i) {
             return data.labels[i];
+        },
+
+        labelExists: function (i) {
+
+            for (label of data.labels) {
+                if (label.labelSpot == i) {
+                    return true;
+                }
+            }
+            return false;
+        },
+
+        schoolExists: function (i) {
+
+            for (school of data.schools) {
+                if (school.schoolId == i) {
+                    return true;
+                }
+            }
+            return false;
         }
     };
 })();

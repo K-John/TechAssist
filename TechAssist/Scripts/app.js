@@ -44,28 +44,45 @@
 
     var validateInput = function () {
 
-        // Get the input field data
         var input = UICtrl.getInput();
+        var errArray = [];
+        var err = "<strong>Error.</strong> There are issue(s) with the input:<br>";
 
-        // Create an array and push any new errors to it. At the end, if array is empty then input has been validated.
-        // Otherwise, loop through errors into a string and push it as an alert.
+        for (field in input) {
+            document.getElementById(field).classList.remove('has-error'); //Remove any existing errors from previous validation
 
-        // "Error. There are the following issue(s) with the input: <br>
-        // "<br>Not all inputs have been filled."
-        // "<br>The barcode needs to be numbers only."
+            if (input[field] == "") {
+                errArray.push("<br>- <strong>" + UICtrl.addAlertError(field) + "</strong> cannot be empty.");
+            }
+        }
 
-        //Any input is empty
-        //Existing label in db
-        //Valid barcode (numbers only, from 4 to 6, input.barcode.length, /^\d+$/.test(val))
-        //Valid schoolId (run a labelcontroller function to check if school exists in array)
+        if (!(/^\d+$/.test(input.barcode)) || input.barcode.length < 4 || input.barcode.length > 6) {
 
-        // Add item to the label controller
-        if (input.schoolId !== "" && input.firstName !== "" && input.lastName !== "" && input.barcode !== "" && input.labelSpot !== "") {
+            errArray.push("<br>- <strong>" + UICtrl.addAlertError("barcode") + "</strong> is not valid (Numeric value, 4 to 6 characters.)");
+        }
 
-            ctrlAddLabel(LabelCtrl.newLabel(input.schoolId, input.firstName, input.lastName, input.barcode, input.labelSpot));
-        } else {
+        if (!LabelCtrl.schoolExists(input.schoolId)) {
+
+            errArray.push("<br>- <strong>" + UICtrl.addAlertError("schoolId") + "</strong> is not a valid selection.");
+        }
+
+        if (LabelCtrl.labelExists(input.labelSpot)) {
+
+            errArray.push("<br>- <strong>" + UICtrl.addAlertError("labelSpot") + "</strong> #<strong>" + input.labelSpot + " </strong>already exists.");
+        }
+
+        // If Error Array is not empty, display the errors and do not proceed with label creation
+        if (errArray != undefined && errArray.length > 0) {
+
+            errArray.forEach(function (item, index) {
+                err = err.concat(item);
+            });
+            UICtrl.addAlert(err, false, false);
             return false;
         }
+
+        // No errors were found with the input, proceed with creating the label
+        ctrlAddLabel(LabelCtrl.newLabel(input.schoolId, UICtrl.capFirstLetter(input.firstName), UICtrl.capFirstLetter(input.lastName), input.barcode, input.labelSpot));
     };
 
     var ctrlAddLabel = function (newItem) {
@@ -80,15 +97,10 @@
                 UICtrl.addAlert(content, true, false);
             }
         });
-        // Add item to label data
         LabelCtrl.addItem(newItem);
-        // Add item to UI
         UICtrl.addListItem(newItem, LabelCtrl.getSchoolAcronym(newItem.schoolId), 0);
-        // Update expanding list if necessary
         UICtrl.handleExpandingList(LabelCtrl.getLabelCount());
-        // Update label count on UI
         UICtrl.setLabelCount(LabelCtrl.getLabelCount());
-        // Clear fields and prepare foor new label
         UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
     };
 
