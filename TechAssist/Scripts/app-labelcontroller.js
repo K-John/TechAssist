@@ -1,8 +1,5 @@
 ﻿var LabelController = (function () {
 
-    /*
-     * Label Object
-     */
     var Label = function (schoolId, firstName, lastName, barcode, labelSpot) {
         this.schoolId = schoolId;
         this.firstName = firstName;
@@ -10,9 +7,7 @@
         this.barcode = barcode;
         this.labelSpot = labelSpot;
     };
-    /*
-     * School Object
-     */
+
     var School = function (schoolId, schoolName, schoolAcronym, schoolPhone, schoolPictureUrl) {
         this.schoolId = schoolId;
         this.schoolName = schoolName;
@@ -21,43 +16,59 @@
         this.schoolPictureUrl = schoolPictureUrl;
     };
 
-    /*
-     * Array that stores all label data
-     */
     var data = {
         labels: [],
         schools: []
     };
 
     return {
+
         newLabel: function (schoolId, firstName, lastName, barcode, labelSpot) {
 
             return new Label(schoolId, firstName, lastName, barcode, labelSpot);
         },
-        /*
-         * Adds label to the data array as a Label object
-         */
+
         addItem: function (newItem) {
 
             data.labels.push(newItem);
         },
-        /*
-         * Gets the biggest labelspot in the data array
-         */
+
         getBiggestLabelId: function () {
 
             var largest = 0;
 
-            // Loop through the data array
             for (var i = 0; i < data.labels.length; i++) {
 
-                if (largest < data.labels[i].labelSpot) {
+                if (largest < parseInt(data.labels[i].labelSpot)) {
 
-                    // If the labelspot in the data array is larger than what we've checked so far, update it
                     largest = data.labels[i].labelSpot;
                 }
             }
             return largest;
+        },
+
+        insertionSort: function (arr) {
+
+            for (var i = 1; i < arr.length; i++) {
+                if (parseInt(arr[i].labelSpot) < parseInt(arr[0].labelSpot)) {
+                    //move current element to the first position
+                    arr.unshift(arr.splice(i, 1)[0]);
+                }
+                else if (parseInt(arr[i].labelSpot) > parseInt(arr[i - 1].labelSpot)) {
+                    //leave current element where it is
+                    continue;
+                }
+                else {
+                    //find where element should go
+                    for (var j = 1; j < i; j++) {
+                        if (parseInt(arr[i].labelSpot) > parseInt(arr[j - 1].labelSpot) && parseInt(arr[i].labelSpot) < parseInt(arr[j].labelSpot)) {
+                            //move element
+                            arr.splice(j, 0, arr.splice(i, 1)[0]);
+                        }
+                    }
+                }
+            }
+            return arr;
         },
 
         testGetData: function () {
@@ -84,7 +95,7 @@
                 }
             }
         },
-        // TODO: May not need this function?
+
         getLabelCount: function () {
             return data.labels.length;
         },

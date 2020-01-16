@@ -2,7 +2,7 @@
 
     var UILabelCount = 0;
     var expandListCount = 1;
-    var expandListThreshhold = 2;
+    var expandListThreshhold = 5;
     var expandListStatus = false;
 
     var DOMstrings = {

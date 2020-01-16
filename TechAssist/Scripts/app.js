@@ -61,7 +61,7 @@
             errArray.push("<br>- <strong>" + UICtrl.addAlertError("barcode") + "</strong> is not valid (Numeric value, 4 to 6 characters.)");
         }
 
-        if (!LabelCtrl.schoolExists(input.schoolId)) {
+        if (!LabelCtrl.schoolExists(input.schoolId) || input.schoolId == 0) {
 
             errArray.push("<br>- <strong>" + UICtrl.addAlertError("schoolId") + "</strong> is not a valid selection.");
         }
@@ -120,19 +120,36 @@
         UICtrl.handleExpandingList(labelCount);
     };
 
+    var getDBItems = function () {
+
+        DBCtrl.getAllItems(function (success, result) {
+
+            if (!success) {
+                UICtrl.addAlert("<strong>Error.</strong> There was an issue getting your data from the database. Please refresh the page to try again.", false, true);
+            } else {
+                var sortedResult = LabelCtrl.insertionSort(result);
+                sortedResult.forEach(function (newItem) {
+                    LabelCtrl.addItem(newItem);
+                    UICtrl.addListItem(newItem, LabelCtrl.getSchoolAcronym(newItem.schoolId), 0);
+                    UICtrl.handleExpandingList(LabelCtrl.getLabelCount());
+                    UICtrl.setLabelCount(LabelCtrl.getLabelCount());
+                    UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
+                });
+            }
+        });
+    };
+
     return {
         init: function () {
 
             setupEventListeners();
             getAPIInfo();
-
             DBCtrl.establishDB(function (result, err) {
                 if (!result) {
                     console.log("Error connection to DB: ", err);
                     UICtrl.addAlert("<strong>Error.</strong> There was an issue connection to the database. This application will not work as intended.", false, true);
                 } else {
-                    console.log("DB Connection Established")
-                    UICtrl.addAlert("<strong>Success!</strong> Database Connection Established.", true, true);
+                    getDBItems();
                 }
             });
         }

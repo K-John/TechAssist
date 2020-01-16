@@ -39,6 +39,20 @@
             };
         },
 
+        getAllItems: function (callback) {
+            var transaction = db.transaction(objectStoreName, "readwrite");
+            var labelStore = transaction.objectStore(objectStoreName);
+            var request = labelStore.getAll();
+
+            request.onsuccess = function () {
+                callback(true, request.result);
+            };
+
+            request.onerror = function () {
+                callback(false, request.error);
+            };
+        },
+
         testGetData: function () {
 
             var transaction = db.transaction(objectStoreName, "readwrite");
