@@ -18,6 +18,8 @@
             }
         });
 
+        document.querySelector("#" + DOM.listClear).addEventListener('click', clearDB);
+
         document.querySelector("#" + DOM.expandList).addEventListener('click', expandList);
 
         document.addEventListener('click', function (event) {
@@ -135,6 +137,24 @@
                     UICtrl.setLabelCount(LabelCtrl.getLabelCount());
                     UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
                 });
+            }
+        });
+    };
+
+    var clearDB = function () {
+        var content;
+        DBCtrl.clearAllItems(function (result, err) {
+            if (!result) {
+                content = "<strong>Error.</strong> There was an error trying to clear the list. Please refresh the page and try again.<br><br><strong>Details: </strong>" + err;
+                UICtrl.addAlert(content,false,false);
+            } else {
+                UICtrl.clearList();
+                LabelCtrl.clearLabelData();
+                UICtrl.handleExpandingList(LabelCtrl.getLabelCount());
+                UICtrl.setLabelCount(LabelCtrl.getLabelCount());
+                UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
+                content = "<strong>Success!</strong> The database list has been cleared.";
+                UICtrl.addAlert(content, true, false);
             }
         });
     };

@@ -53,6 +53,20 @@
             };
         },
 
+        clearAllItems: function (callback) {
+            var transaction = db.transaction(objectStoreName, "readwrite");
+            var labelStore = transaction.objectStore(objectStoreName);
+            var request = labelStore.clear();
+
+            request.onsuccess = function () {
+                callback(true);
+            };
+
+            request.onerror = function () {
+                callback(false, request.error);
+            }
+        },
+
         testGetData: function () {
 
             var transaction = db.transaction(objectStoreName, "readwrite");

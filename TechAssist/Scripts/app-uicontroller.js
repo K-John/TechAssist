@@ -178,6 +178,13 @@
         capFirstLetter: function (string) {
 
             return string.replace(/^\w/, c => c.toUpperCase());
+        },
+
+        clearList: function () {
+            var container = document.getElementById(DOMstrings.listContainer).parentNode;
+            while (container.childNodes.length > 2) {
+                container.lastChild.remove();
+            }
         }
     };
 })();

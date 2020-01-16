@@ -122,6 +122,10 @@
                 }
             }
             return false;
+        },
+
+        clearLabelData: function () {
+            data.labels = [];
         }
     };
 })();
