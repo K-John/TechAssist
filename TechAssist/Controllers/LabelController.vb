@@ -10,6 +10,11 @@ Namespace Controllers
             Return View()
         End Function
 
+        ' GET: LabelSheet
+        Function LabelSheet() As ActionResult
+            Return View()
+        End Function
+
         ' GET: PartialView AddLabel
         Function AddLabel() As ActionResult
 

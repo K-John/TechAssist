@@ -11,6 +11,13 @@ Public Module BundleConfig
                     "~/Scripts/app-uicontroller.js",
                     "~/Scripts/app.js"))
 
+        bundles.Add(New ScriptBundle("~/bundles/labelsheet").Include(
+                    "~/Scripts/jquery-{version}.js",
+                    "~/scripts/app-labelcontroller.js",
+                    "~/Scripts/app-uicontroller.js",
+                    "~/Scripts/app-dbcontroller.js",
+                    "~/Scripts/app-labelsheet.js"))
+
         bundles.Add(New ScriptBundle("~/bundles/jquery").Include(
                     "~/Scripts/jquery-{version}.js"))
 

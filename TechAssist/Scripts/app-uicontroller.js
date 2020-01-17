@@ -26,7 +26,8 @@
         alertContainer: 'alertcontainer',
         temporaryAlert: 'tempalert',
         permanentAlert: 'permalert',
-        closeAlert: 'closealert'
+        closeAlert: 'closealert',
+        pageContainer: 'pagecontainer'
     };
 
     return {

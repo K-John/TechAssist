@@ -193,6 +193,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\labelsheet.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -214,6 +215,7 @@
     <None Include="packages.config" />
     <Content Include="Scripts\app-dbcontroller.js" />
     <Content Include="Scripts\app-labelcontroller.js" />
+    <Content Include="Scripts\app-labelsheet.js" />
     <Content Include="Scripts\app-uicontroller.js" />
     <Content Include="Scripts\app.js" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
@@ -227,6 +229,7 @@
     <Content Include="Views\Label\AddLabel.vbhtml" />
     <Content Include="Views\Label\LabelList.vbhtml" />
     <Content Include="Views\Label\LabelPreview.vbhtml" />
+    <Content Include="Views\Label\LabelSheet.vbhtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />
