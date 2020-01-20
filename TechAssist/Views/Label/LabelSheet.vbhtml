@@ -11,7 +11,7 @@ End Code
 </head>
 <body>
     <div class="page" id="pagecontainer">
-        <div class="label"></div>
+        <!--<div class="label"></div>
         <div class="label">
             <img class="image" src="/content/img/KMS.png">
             <div class="student">
@@ -45,7 +45,7 @@ End Code
             <div class="school">
                 <span>IF FOUND, CALL KMS: 931-387-3201</span>
             </div>
-        </div>
+        </div>-->
     </div>
 </body>
 @Scripts.Render("~/bundles/labelsheet")
