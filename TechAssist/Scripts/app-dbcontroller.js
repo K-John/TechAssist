@@ -21,7 +21,7 @@
                 db = openRequest.result;
                 console.log("DB Upgrade Needed");
                 db.createObjectStore(objectStoreName);
-            }
+            };
         },
 
         addToDB: function (item, id, callback) {
@@ -56,11 +56,11 @@
 
             request.onsuccess = function () {
                 callback(true);
-            }
+            };
 
             request.onerror = function () {
                 callback(false, request.error);
-            }
+            };
         },
 
         clearAllItems: function (callback) {
@@ -73,7 +73,7 @@
 
             request.onerror = function () {
                 callback(false, request.error);
-            }
+            };
         },
 
         testGetData: function () {

@@ -10,7 +10,8 @@ body {
 
 .page {
     margin: .5in 0;
-    display: inline-block;
+    height: 10in;
+    display: inline-table;
     page-break-after: always;
 }
 

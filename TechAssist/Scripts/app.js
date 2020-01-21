@@ -1,12 +1,13 @@
 ﻿var controller = (function (LabelCtrl, DBCtrl, UICtrl) {
 
     var setupEventListeners = function () {
+
         var DOM = UICtrl.getDOMstrings();
-
+        // Submit in AddLabel
         document.querySelector("#" + DOM.inputSubmit).addEventListener('click', validateInput);
-        document.addEventListener('keypress', function (event) {
 
-            // Pressing enter key in AddLabel section
+        document.addEventListener('keypress', function (event) {
+            // Enter Key in AddLabel
             if ((event.keyCode === 13 || event.which === 13) &&
                 (document.activeElement === document.getElementById(DOM.inputSchoolId)
                     || document.activeElement === document.getElementById(DOM.inputFirstName)
@@ -17,17 +18,17 @@
                 validateInput();
             }
         });
-
+        // Clear button in LabelList
         document.querySelector("#" + DOM.listClear).addEventListener('click', clearDB);
-
+        // See More button in LabelList
         document.querySelector("#" + DOM.expandList).addEventListener('click', expandList);
 
         document.addEventListener('click', function (event) {
-
+            // Close button on alert
             if (event.target.parentNode.id == DOM.closeAlert) {
                 UICtrl.closeAlert(event.target);
             }
-
+            // Remove button on label in LabelList
             if (event.target.parentNode.parentNode.id == DOM.listRow) {
                 removeLabel(event.target.parentNode.parentNode);
             }
@@ -81,7 +82,7 @@
         // If Error Array is not empty, display the errors and do not proceed with label creation
         if (errArray != undefined && errArray.length > 0) {
 
-            errArray.forEach(function (item, index) {
+            errArray.forEach(function (item) {
                 err = err.concat(item);
             });
             UICtrl.addAlert(err, false, false);

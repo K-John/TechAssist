@@ -38,11 +38,12 @@
 
             if (parseInt(labels[progress].labelSpot) == i) {
 
-                html = '<div class="label"><img class="image" src="/content/img/%schoolAcronym%.png"><div class="student"><div id="resize">%firstName%</div><div id="resize">%lastName%</div><svg class="barcode"jsbarcode-value="*%barcode%*"jsbarcode-displayvalue="false"jsbarcode-width="1"jsbarcode-height="20"jsbarcode-margin="5"></svg></div><div class="school"><span>IF FOUND, CALL %schoolAcronym%: 931-387-3201</span></div></div>';
+                html = '<div class="label"><img class="image" src="/content/img/%schoolAcronym%.jpg"><div class="student"><div id="resize">%firstName%</div><div id="resize">%lastName%</div><svg class="barcode"jsbarcode-value="*%barcode%*"jsbarcode-displayvalue="false"jsbarcode-width="1"jsbarcode-height="20"jsbarcode-margin="5"></svg></div><div class="school"><span>IF FOUND, CALL %schoolAcronym%: %schoolPhone%</span></div></div>';
                 newhtml = html.replace(/%schoolAcronym%/g, LabelCtrl.getSchoolAcronym(labels[progress].schoolId));
                 newhtml = newhtml.replace(/%firstName%/g, labels[progress].firstName);
                 newhtml = newhtml.replace(/%lastName%/g, labels[progress].lastName);
                 newhtml = newhtml.replace(/%barcode%/g, labels[progress].barcode);
+                newhtml = newhtml.replace(/%schoolPhone%/g, LabelCtrl.getSchoolPhone(labels[progress].schoolId));
                 document.getElementById(DOM.pageContainer).insertAdjacentHTML('beforeend', newhtml);
                 progress++;
 

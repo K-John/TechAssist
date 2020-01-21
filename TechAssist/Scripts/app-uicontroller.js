@@ -21,6 +21,8 @@
         listContainer: 'listcontainer',
         listRow: 'labelrow',
         previewLabel: 'labelpreview',
+        editLabel: 'editlabel',
+        removeLabel: 'removelabel',
         expandList: 'expandlist',
         labelCount: 'labelcount',
         alertContainer: 'alertcontainer',
@@ -59,7 +61,7 @@
 
             var container = "#" + DOMstrings.listContainer;
 
-            html = '<tr class="hover-view" id="labelrow"><td id="schoolacronym">%schoolAcronym%</td><td id="firstname">%firstName%</td><td id="lastname">%lastName%</td><td id="barcode">%barcode%</td><td id="labelspot" style="text-align: center;">%labelSpot%</td><td style="text-align: center;"><span class="glyphicon glyphicon-pencil icon-hover" data-toggle="tooltip" data-placement="top" title="Edit Label" aria-hidden="true"></span><span class="glyphicon glyphicon-remove icon-hover" data-toggle="tooltip" data-placement="top" title="Remove Label" aria-hidden="true"></span></td></tr>';
+            html = '<tr class="hover-view" id="labelrow"><td id="schoolacronym">%schoolAcronym%</td><td id="firstname">%firstName%</td><td id="lastname">%lastName%</td><td id="barcode">%barcode%</td><td id="labelspot" style="text-align: center;">%labelSpot%</td><td style="text-align: center;"><span class="glyphicon glyphicon-pencil icon-hover" data-toggle="tooltip" data-placement="top" title="Edit Label" id= "editlabel" aria-hidden="true"></span><span class="glyphicon glyphicon-remove icon-hover" data-toggle="tooltip" data-placement="top" title="Remove Label" id="removelabel" aria-hidden="true"></span></td></tr>';
             newHtml = html.replace(/%schoolId%/g, obj.schoolId);
             newHtml = newHtml.replace(/%schoolAcronym%/g, schoolAcronym)
             newHtml = newHtml.replace(/%firstName%/g, obj.firstName);

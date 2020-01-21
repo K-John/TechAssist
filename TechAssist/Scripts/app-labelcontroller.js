@@ -85,6 +85,7 @@
             }
         },
 
+        // TODO: Convert to array index instead of raw loop?
         getSchoolAcronym: function (schoolId) {
 
             for (var i = 0; i < data.schools.length; i++) {
@@ -92,6 +93,16 @@
                 if (data.schools[i].schoolId == schoolId) {
 
                     return data.schools[i].schoolAcronym;
+                }
+            }
+        },
+
+        // TODO: Convert to array index instead of raw loop?
+        getSchoolPhone: function (schoolId) {
+
+            for (var i = 0; i < data.schools.length; i++) {
+                if (data.schools[i].schoolId == schoolId) {
+                    return data.schools[i].schoolPhone;
                 }
             }
         },
