@@ -1,6 +1,6 @@
 ﻿var DBController = (function () {
 
-    var db;
+    var db, request;
     var objectStoreName = "labels";
 
     return {
@@ -26,9 +26,7 @@
 
         addToDB: function (item, id, callback) {
 
-            var transaction = db.transaction(objectStoreName, "readwrite");
-            var labelStore = transaction.objectStore(objectStoreName);
-            var request = labelStore.add(item, id);
+            request = db.transaction(objectStoreName, "readwrite").objectStore(objectStoreName).add(item, id);
 
             request.onsuccess = function () {
                 callback(true, request.result);
@@ -40,9 +38,8 @@
         },
 
         getAllItems: function (callback) {
-            var transaction = db.transaction(objectStoreName, "readwrite");
-            var labelStore = transaction.objectStore(objectStoreName);
-            var request = labelStore.getAll();
+
+            request = db.transaction(objectStoreName, "readwrite").objectStore(objectStoreName).getAll();
 
             request.onsuccess = function () {
                 callback(true, request.result);
@@ -53,10 +50,22 @@
             };
         },
 
+        removeItem: function (key, callback) {
+
+            request = db.transaction(objectStoreName, "readwrite").objectStore(objectStoreName).delete(key);
+
+            request.onsuccess = function () {
+                callback(true);
+            }
+
+            request.onerror = function () {
+                callback(false, request.error);
+            }
+        },
+
         clearAllItems: function (callback) {
-            var transaction = db.transaction(objectStoreName, "readwrite");
-            var labelStore = transaction.objectStore(objectStoreName);
-            var request = labelStore.clear();
+
+            request = db.transaction(objectStoreName, "readwrite").objectStore(objectStoreName).clear();
 
             request.onsuccess = function () {
                 callback(true);

@@ -27,10 +27,14 @@
             if (event.target.parentNode.id == DOM.closeAlert) {
                 UICtrl.closeAlert(event.target);
             }
+
+            if (event.target.parentNode.parentNode.id == DOM.listRow) {
+                removeLabel(event.target.parentNode.parentNode);
+            }
         });
     };
 
-    var getAPIInfo = function () {
+    var getAPIInfo = function (callback) {
 
         var xmlhttp = new XMLHttpRequest();
         var url = "/label/schoolsinfo";
@@ -38,6 +42,7 @@
             if (this.readyState == 4 && this.status == 200) {
                 var responseArr = JSON.parse(this.responseText);
                 LabelCtrl.addSchools(responseArr);
+                callback();
             }
         };
         xmlhttp.open("GET", url, true);
@@ -145,7 +150,7 @@
         var content;
         DBCtrl.clearAllItems(function (result, err) {
             if (!result) {
-                content = "<strong>Error.</strong> There was an error trying to clear the list. Please refresh the page and try again.<br><br><strong>Details: </strong>" + err;
+                content = "<strong>Error.</strong> There was an error clearing the list. Please refresh the page and try again.<br><br><strong>Details: </strong>" + err;
                 UICtrl.addAlert(content,false,false);
             } else {
                 UICtrl.clearList();
@@ -153,7 +158,29 @@
                 UICtrl.handleExpandingList(LabelCtrl.getLabelCount());
                 UICtrl.setLabelCount(LabelCtrl.getLabelCount());
                 UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
+
                 content = "<strong>Success!</strong> The database list has been cleared.";
+                UICtrl.addAlert(content, true, false);
+            }
+        });
+    };
+
+    var removeLabel = function (label) {
+
+        var labelSpot = label.childNodes[4].textContent;
+
+        DBCtrl.removeItem(labelSpot, function (result, err) {
+            if (!result) {
+                content = "<strong>Error.</strong> There was an error removing the label. Please refresh the page and try again.<br><br><strong>Details: </strong>" + err;
+                UICtrl.addAlert(content, false, false);
+            } else {
+                // Handle expanding list to see if we need to load labels once reached under view limit after deleting
+                LabelCtrl.removeLabel(labelSpot);
+                UICtrl.removeLabel(label);
+                UICtrl.handleExpandingList();
+                UICtrl.setLabelCount(LabelCtrl.getLabelCount());
+
+                content = "<strong>Success!</strong> The label has been deleted."
                 UICtrl.addAlert(content, true, false);
             }
         });
@@ -163,13 +190,12 @@
         init: function () {
 
             setupEventListeners();
-            getAPIInfo();
             DBCtrl.establishDB(function (result, err) {
                 if (!result) {
                     console.log("Error connection to DB: ", err);
                     UICtrl.addAlert("<strong>Error.</strong> There was an issue connection to the database. This application will not work as intended.", false, true);
                 } else {
-                    getDBItems();
+                    getAPIInfo(getDBItems);
                 }
             });
         }

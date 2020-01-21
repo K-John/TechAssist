@@ -59,7 +59,7 @@
 
             var container = "#" + DOMstrings.listContainer;
 
-            html = '<tr class="hover-view" id="labelrow-%labelSpot%"><td id="schoolacronym">%schoolAcronym%</td><td id="firstname">%firstName%</td><td id="lastname">%lastName%</td><td id="barcode">%barcode%</td><td id="labelspot" style="text-align: center;">%labelSpot%</td><td style="text-align: center;"><span class="glyphicon glyphicon-pencil icon-hover" data-toggle="tooltip" data-placement="top" title="Edit Label" aria-hidden="true"></span><span class="glyphicon glyphicon-remove icon-hover" data-toggle="tooltip" data-placement="top" title="Remove Label" aria-hidden="true"></span></td></tr>';
+            html = '<tr class="hover-view" id="labelrow"><td id="schoolacronym">%schoolAcronym%</td><td id="firstname">%firstName%</td><td id="lastname">%lastName%</td><td id="barcode">%barcode%</td><td id="labelspot" style="text-align: center;">%labelSpot%</td><td style="text-align: center;"><span class="glyphicon glyphicon-pencil icon-hover" data-toggle="tooltip" data-placement="top" title="Edit Label" aria-hidden="true"></span><span class="glyphicon glyphicon-remove icon-hover" data-toggle="tooltip" data-placement="top" title="Remove Label" aria-hidden="true"></span></td></tr>';
             newHtml = html.replace(/%schoolId%/g, obj.schoolId);
             newHtml = newHtml.replace(/%schoolAcronym%/g, schoolAcronym)
             newHtml = newHtml.replace(/%firstName%/g, obj.firstName);
@@ -87,7 +87,7 @@
             // Separate 
             fieldsArray = Array.prototype.slice.call(fields);
 
-            fieldsArray.forEach(function (current, index, array) {
+            fieldsArray.forEach(function (current) {
                 current.value = "";
             });
 
@@ -104,8 +104,8 @@
             if (UILabelCount > (expandListCount * expandListThreshhold)) {
 
                 //TODO: Change it to one line of code to remove? No need to instantiate a new variable for this?
-                var lastLabelId = document.getElementById(DOMstrings.listContainer).parentElement.lastElementChild.id;
-                document.getElementById(lastLabelId).remove();
+                var lastLabel = document.getElementById(DOMstrings.listContainer).parentElement.lastElementChild;
+                lastLabel.remove();
                 UILabelCount--;
             }
 
@@ -186,6 +186,10 @@
             while (container.childNodes.length > 2) {
                 container.lastChild.remove();
             }
+        },
+
+        removeLabel: function (label) {
+            label.remove();
         }
     };
 })();

@@ -126,6 +126,10 @@
 
         clearLabelData: function () {
             data.labels = [];
+        },
+
+        removeLabel: function (labelId) {
+            data.labels.splice(data.labels.findIndex(label => label.labelSpot == labelId), 1);
         }
     };
 })();
