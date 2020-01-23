@@ -29,8 +29,13 @@
                 UICtrl.closeAlert(event.target);
             }
             // Remove button on label in LabelList
-            if (event.target.parentNode.parentNode.id == DOM.listRow) {
-                removeLabel(event.target.parentNode.parentNode);
+            if (event.target.parentNode.parentNode.id == DOM.listRow && event.target.id == DOM.removeLabel) {
+                ctrlRemoveLabel(event.target.parentNode.parentNode);
+            }
+            // Edit button on label in LabelList
+            if (event.target.parentNode.parentNode.id == DOM.listRow && event.target.id == DOM.editLabel) {
+                console.log("Editing label!");
+                ctrlEditLabel(event.target.parentNode.parentNode);
             }
         });
     };
@@ -93,6 +98,10 @@
         ctrlAddLabel(LabelCtrl.newLabel(input.schoolId, UICtrl.capFirstLetter(input.firstName), UICtrl.capFirstLetter(input.lastName), input.barcode, input.labelSpot));
     };
 
+    var validateEdit = function () {
+
+    };
+
     var ctrlAddLabel = function (newItem) {
 
         DBCtrl.addToDB(newItem, newItem.labelSpot, function (result, err) {
@@ -121,7 +130,7 @@
         var end = (start - threshhold <= 0) ? 1 : (start - threshhold);
 
         for (i = start; i >= end; i--) {
-            var label = LabelCtrl.getLabel(i - 1);
+            var label = LabelCtrl.getLabelByIndex(i - 1);
             UICtrl.addListItem(label, LabelCtrl.getSchoolAcronym(label.schoolId), 1);
         }
         UICtrl.addExpandingListCount();
@@ -166,7 +175,7 @@
         });
     };
 
-    var removeLabel = function (label) {
+    var ctrlRemoveLabel = function (label) {
 
         var labelSpot = label.childNodes[4].textContent;
 
@@ -185,6 +194,15 @@
                 UICtrl.addAlert(content, true, false);
             }
         });
+    };
+
+    var ctrlEditLabel = function (labelElement) {
+
+        var label = LabelCtrl.getLabelBySpot(labelElement.childNodes[4].textContent);
+        console.log(label);
+        console.log(labelElement);
+        //Send the label to UI and have the fields updated
+
     };
 
     return {

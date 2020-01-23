@@ -151,6 +151,10 @@
             document.getElementById(DOMstrings.alertContainer).insertAdjacentHTML('afterbegin', newHtml);
         },
 
+        editLabel: function (obj, element) {
+            // element.querySelector("#" + DOMstrings.lastName).textContent = html (<input value="obj.lastName">)
+        },
+
         closeAlert: function (element) {
             element.parentNode.parentNode.remove();
         },
@@ -192,6 +196,7 @@
 
         removeLabel: function (label) {
             label.remove();
+            UILabelCount--;
         }
     };
 })();

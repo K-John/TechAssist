@@ -111,8 +111,12 @@
             return data.labels.length;
         },
 
-        getLabel: function (i) {
+        getLabelByIndex: function (i) {
             return data.labels[i];
+        },
+
+        getLabelBySpot: function (i) {
+            return data.labels[data.labels.findIndex(label => label.labelSpot == i)];
         },
 
         labelExists: function (i) {
