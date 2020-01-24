@@ -17,6 +17,14 @@
             {
                 validateInput();
             }
+            if ((event.keyCode === 13 || event.which === 13) &&
+                (document.activeElement === document.getElementById(DOM.editSchoolId)
+                    || document.activeElement === document.getElementById(DOM.editFirstName)
+                    || document.activeElement === document.getElementById(DOM.editLastName)
+                    || document.activeElement === document.getElementById(DOM.editBarcode)))
+            {
+                validateEdit(event.target.parentNode.parentNode);
+            }
         });
         // Clear button in LabelList
         document.querySelector("#" + DOM.listClear).addEventListener('click', clearDB);
@@ -29,13 +37,22 @@
                 UICtrl.closeAlert(event.target);
             }
             // Remove button on label in LabelList
-            if (event.target.parentNode.parentNode.id == DOM.listRow && event.target.id == DOM.removeLabel) {
+            if (event.target.parentNode.parentNode.id == DOM.listRow && DOM.removeLabel != undefined && event.target.id == DOM.removeLabel) {
                 ctrlRemoveLabel(event.target.parentNode.parentNode);
             }
             // Edit button on label in LabelList
-            if (event.target.parentNode.parentNode.id == DOM.listRow && event.target.id == DOM.editLabel) {
+            if (event.target.parentNode.parentNode.id == DOM.listRow && DOM.editLabel != undefined && event.target.id == DOM.editLabel) {
                 console.log("Editing label!");
                 ctrlEditLabel(event.target.parentNode.parentNode);
+            }
+            // Save Edit button on label in LabelList
+            // TODO: Error here saying 'parentNode is null'
+            if (event.target.parentNode.parentNode.id == DOM.listRow && DOM.editSave != null && event.target.id == DOM.editSave) {
+                validateEdit(event.target.parentNode.parentNode);
+            }
+            // Cancel Edit button on label in LabelList
+            if (event.target.parentNode.parentNode.id == DOM.listRow && DOM.editCancel != null && event.target.id == DOM.editCancel) {
+
             }
         });
     };
@@ -98,8 +115,39 @@
         ctrlAddLabel(LabelCtrl.newLabel(input.schoolId, UICtrl.capFirstLetter(input.firstName), UICtrl.capFirstLetter(input.lastName), input.barcode, input.labelSpot));
     };
 
-    var validateEdit = function () {
+    var validateEdit = function (labelElement) {
 
+        var input = UICtrl.getEditInput(labelElement);
+        var errArray = [];
+        var err = "<strong>Error.</strong> There are issue(s) with the edit:<br>";
+
+        var originalLabel = LabelCtrl.getLabelBySpot(labelElement.childNodes[4].textContent);
+
+        if (firstName == "" || input.lastName == "" || input.barcode == "") {
+
+            errArray.push("<br>- <strong>Input</strong> cannot be empty.");
+        }
+
+        if (!(/^\d+$/.test(input.barcode)) || input.barcode.length < 4 || input.barcode.length > 6) {
+
+            errArray.push("<br>- <strong>Barcode</strong> is not valid (Numeric value, 4 to 6 characters.)");
+        }
+
+        if (!LabelCtrl.schoolExists(input.schoolId) || input.schoolId == 0) {
+
+            errArray.push("<br>- <strong>School</strong> is not a valid selection.");
+        }
+
+        // If Error Array is not empty, display the errors and do not proceed with label creation
+        if (errArray != undefined && errArray.length > 0) {
+
+            errArray.forEach(function (item) {
+                err = err.concat(item);
+            });
+            UICtrl.addAlert(err, false, false);
+            return false;
+        }
+        console.log("Edit is valid");
     };
 
     var ctrlAddLabel = function (newItem) {
@@ -199,10 +247,7 @@
     var ctrlEditLabel = function (labelElement) {
 
         var label = LabelCtrl.getLabelBySpot(labelElement.childNodes[4].textContent);
-        console.log(label);
-        console.log(labelElement);
-        //Send the label to UI and have the fields updated
-        UICtrl.editLabel(label, labelElement, LabelCtrl.getSchools());
+        UICtrl.startEditLabel(label, labelElement, LabelCtrl.getSchools());
     };
 
     return {

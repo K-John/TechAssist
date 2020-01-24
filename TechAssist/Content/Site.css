@@ -79,18 +79,33 @@ textarea {
 
 /* Label List CSS */
 
-.hover-view span {
-    display: none;
+.table-row span {
     cursor: pointer;
     font-size: 16px;
 }
 
-.hover-view input {
+.table-row .hover-view {
+    display: none;
+}
+
+.table-row input {
     width: 100%;
 }
 
-.hover-view:hover span {
+.table-row:hover .hover-view {
     display: inline-block;
+}
+
+.icon-hover {
+    color: #828282;
+}
+
+.icon-hover:first-child {
+    margin-right: 5px;
+}
+
+.icon-hover:last-child {
+    margin-left: 5px;
 }
 
 .icon-hover:hover {
@@ -101,4 +116,12 @@ textarea {
     text-align: center;
     text-decoration: underline;
     cursor: pointer;
+}
+
+#schoolacronym {
+    vertical-align: middle;
+}
+
+#labeldetails {
+    vertical-align: bottom;
 }

@@ -17,16 +17,19 @@
         listLastName: 'lastname',
         listBarcode: 'barcode',
         listLabelSpot: 'labelspot',
+        listLabelDetails: 'labeldetails',
         listExport: 'export',
         listClear: 'clear',
         listContainer: 'listcontainer',
         listRow: 'labelrow',
         previewLabel: 'labelpreview',
         editLabel: 'editlabel',
-        editSchoolId: 'editSchoolId',
-        editFirstName: 'editFirstName',
-        editLastName: 'editLastName',
-        editBarcode: 'editBarcode',
+        editSchoolId: 'editschoolid',
+        editFirstName: 'editfirstname',
+        editLastName: 'editlastname',
+        editBarcode: 'editbarcode',
+        editSave: 'editsave',
+        editCancel: 'editcancel',
         removeLabel: 'removelabel',
         expandList: 'expandlist',
         labelCount: 'labelcount',
@@ -56,6 +59,14 @@
                 labelSpot: document.querySelector("#" + DOMstrings.inputLabelSpot).value
             }
         },
+        getEditInput: function (element) {
+            return {
+                schoolId: element.querySelector("#" + DOMstrings.editSchoolId).value,
+                firstName: element.querySelector("#" + DOMstrings.editFirstName).value,
+                lastName: element.querySelector("#" + DOMstrings.editLastName).value,
+                barcode: element.querySelector("#" + DOMstrings.editBarcode).value
+            }
+        },
         /*
          *  @param Label obj
          *  @param int position - Indicates whether record should be inserted at the top or bottom of the table
@@ -66,7 +77,7 @@
 
             var container = "#" + DOMstrings.listContainer;
 
-            html = '<tr class="hover-view" id="labelrow"><td id="schoolacronym">%schoolAcronym%</td><td id="firstname">%firstName%</td><td id="lastname">%lastName%</td><td id="barcode">%barcode%</td><td id="labelspot" style="text-align: center;">%labelSpot%</td><td style="text-align: center;"><span class="glyphicon glyphicon-pencil icon-hover" data-toggle="tooltip" data-placement="top" title="Edit Label" id= "editlabel" aria-hidden="true"></span><span class="glyphicon glyphicon-remove icon-hover" data-toggle="tooltip" data-placement="top" title="Remove Label" id="removelabel" aria-hidden="true"></span></td></tr>';
+            html = '<tr class="table-row" id="labelrow"><td id="schoolacronym">%schoolAcronym%</td><td id="firstname">%firstName%</td><td id="lastname">%lastName%</td><td id="barcode">%barcode%</td><td id="labelspot" style="text-align: center;">%labelSpot%</td><td style="text-align: center;" id="labeldetails"><span class="glyphicon glyphicon-pencil icon-hover" data-toggle="tooltip" data-placement="top" title="Edit Label" id= "editlabel" aria-hidden="true"></span><span class="glyphicon glyphicon-trash icon-hover hover-view" data-toggle="tooltip" data-placement="top" title="Remove Label" id="removelabel" aria-hidden="true"></span></td></tr>';
             newHtml = html.replace(/%schoolId%/g, obj.schoolId);
             newHtml = newHtml.replace(/%schoolAcronym%/g, schoolAcronym)
             newHtml = newHtml.replace(/%firstName%/g, obj.firstName);
@@ -156,28 +167,30 @@
             document.getElementById(DOMstrings.alertContainer).insertAdjacentHTML('afterbegin', newHtml);
         },
 
-        editLabel: function (obj, element, schools) {
+        startEditLabel: function (obj, element, schools) {
 
             var schoolOptions = '';
 
             schools.forEach(function (school) {
-                if (school.schoolId == obj.schoolId) {
-                    schoolOptions = schoolOptions.concat('<option value="' + school.schoolId + '" selected>' + school.schoolAcronym + '</option>');
-                } else {
-                    schoolOptions = schoolOptions.concat('<option value="' + school.schoolId + '">' + school.schoolAcronym + '</option>');
-                }
+                schoolOptions = (school.schoolId == obj.schoolId) ? schoolOptions.concat('<option value="' + school.schoolId + '" selected>' + school.schoolAcronym + '</option>') : schoolOptions = schoolOptions.concat('<option value="' + school.schoolId + '">' + school.schoolAcronym + '</option>') ;
             });
 
             var fieldData = [
-                [element.querySelector("#" + DOMstrings.listSchoolAcronym), obj.schoolId, '<select id="editSchoolId" name="Edit School">' + schoolOptions + '</select>'],
-                [element.querySelector("#" + DOMstrings.listFirstName), obj.firstName, '<input type="text" name="Edit First Name" id="editFirstName" value="' + obj.firstName + '" />'],
-                [element.querySelector("#" + DOMstrings.listLastName), obj.lastName, '<input type="text" name="Edit Last Name" id="editLastName" value="' + obj.lastName + '" />'],
-                [element.querySelector("#" + DOMstrings.listBarcode), obj.barcode, '<input type="number" name="Edit Barcode" value="' + obj.barcode + '" />']
+                [element.querySelector("#" + DOMstrings.listSchoolAcronym), '<select id="editschoolid" name="Edit School">' + schoolOptions + '</select>', true],
+                [element.querySelector("#" + DOMstrings.listFirstName), '<input type="text" name="Edit First Name" id="editfirstname" value="' + obj.firstName + '" />', true],
+                [element.querySelector("#" + DOMstrings.listLastName), '<input type="text" name="Edit Last Name" id="editlastname" value="' + obj.lastName + '" />', true],
+                [element.querySelector("#" + DOMstrings.listBarcode), '<input type="number" name="Edit Barcode" id="editbarcode" value="' + obj.barcode + '" />', true],
+                [element.querySelector("#" + DOMstrings.listLabelDetails), '<span class="glyphicon glyphicon-remove icon-hover" id="editcancel" title="Cancel Changes"></span>', false],
+                [element.querySelector("#" + DOMstrings.listLabelDetails), '<span class="glyphicon glyphicon-ok icon-hover" id="editsave" title="Save Changes"></span>', false]
             ];
 
             fieldData.forEach(function (field) {
-                field[0].textContent = "";
-                field[0].insertAdjacentHTML('afterbegin', field[2]);
+                if (field[2]) {
+                    field[0].textContent = "";
+                } else {
+                    field[0].lastChild.remove();
+                }
+                field[0].insertAdjacentHTML('afterbegin', field[1]);
             });
         },
 
