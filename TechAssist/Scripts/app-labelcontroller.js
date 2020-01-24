@@ -107,6 +107,10 @@
             }
         },
 
+        getSchools: function () {
+            return data.schools;
+        },
+
         getLabelCount: function () {
             return data.labels.length;
         },

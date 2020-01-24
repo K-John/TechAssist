@@ -202,7 +202,7 @@
         console.log(label);
         console.log(labelElement);
         //Send the label to UI and have the fields updated
-
+        UICtrl.editLabel(label, labelElement, LabelCtrl.getSchools());
     };
 
     return {

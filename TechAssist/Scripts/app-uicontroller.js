@@ -12,6 +12,7 @@
         inputBarcode: 'LabelModel_Barcode',
         inputLabelSpot: 'LabelModel_LabelPlacement',
         inputSubmit: 'submit',
+        listSchoolAcronym: 'schoolacronym',
         listFirstName: 'firstname',
         listLastName: 'lastname',
         listBarcode: 'barcode',
@@ -22,6 +23,10 @@
         listRow: 'labelrow',
         previewLabel: 'labelpreview',
         editLabel: 'editlabel',
+        editSchoolId: 'editSchoolId',
+        editFirstName: 'editFirstName',
+        editLastName: 'editLastName',
+        editBarcode: 'editBarcode',
         removeLabel: 'removelabel',
         expandList: 'expandlist',
         labelCount: 'labelcount',
@@ -151,8 +156,29 @@
             document.getElementById(DOMstrings.alertContainer).insertAdjacentHTML('afterbegin', newHtml);
         },
 
-        editLabel: function (obj, element) {
-            // element.querySelector("#" + DOMstrings.lastName).textContent = html (<input value="obj.lastName">)
+        editLabel: function (obj, element, schools) {
+
+            var schoolOptions = '';
+
+            schools.forEach(function (school) {
+                if (school.schoolId == obj.schoolId) {
+                    schoolOptions = schoolOptions.concat('<option value="' + school.schoolId + '" selected>' + school.schoolAcronym + '</option>');
+                } else {
+                    schoolOptions = schoolOptions.concat('<option value="' + school.schoolId + '">' + school.schoolAcronym + '</option>');
+                }
+            });
+
+            var fieldData = [
+                [element.querySelector("#" + DOMstrings.listSchoolAcronym), obj.schoolId, '<select id="editSchoolId" name="Edit School">' + schoolOptions + '</select>'],
+                [element.querySelector("#" + DOMstrings.listFirstName), obj.firstName, '<input type="text" name="Edit First Name" id="editFirstName" value="' + obj.firstName + '" />'],
+                [element.querySelector("#" + DOMstrings.listLastName), obj.lastName, '<input type="text" name="Edit Last Name" id="editLastName" value="' + obj.lastName + '" />'],
+                [element.querySelector("#" + DOMstrings.listBarcode), obj.barcode, '<input type="number" name="Edit Barcode" value="' + obj.barcode + '" />']
+            ];
+
+            fieldData.forEach(function (field) {
+                field[0].textContent = "";
+                field[0].insertAdjacentHTML('afterbegin', field[2]);
+            });
         },
 
         closeAlert: function (element) {
