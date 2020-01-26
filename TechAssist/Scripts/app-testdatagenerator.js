@@ -53912,7 +53912,7 @@
         barcode = randomInt(1111, 999999);
         labelSpot = x + 1;
 
-        customAlert(LabelCtrl.newLabel(schoolId, firstName, lastName, barcode, labelSpot), labelSpot, function () {
+        customAlert(LabelCtrl.newLabel(schoolId.toString(), firstName, lastName, barcode.toString(), labelSpot.toString()), labelSpot.toString(), function () {
 
             x++;
             var progress = "Completed: " + x + " out of " + count;

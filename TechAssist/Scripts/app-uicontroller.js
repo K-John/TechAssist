@@ -194,6 +194,23 @@
             });
         },
 
+        updateLabel: function (obj, element, schoolAcronym) {
+
+            var fieldData = [
+                [element.querySelector("#" + DOMstrings.listSchoolAcronym), schoolAcronym],
+                [element.querySelector("#" + DOMstrings.listFirstName), obj.firstName],
+                [element.querySelector("#" + DOMstrings.listLastName), obj.lastName],
+                [element.querySelector("#" + DOMstrings.listBarcode), obj.barcode],
+                [element.querySelector("#" + DOMstrings.listLabelDetails), '<span class="glyphicon glyphicon-trash icon-hover hover-view" data-toggle="tooltip" data-placement="top" title="Remove Label" id="removelabel" aria-hidden="true"></span>'],
+                [element.querySelector("#" + DOMstrings.listLabelDetails), '<span class="glyphicon glyphicon-pencil icon-hover" data-toggle="tooltip" data-placement="top" title="Edit Label" id= "editlabel" aria-hidden="true"></span>']
+            ];
+
+            fieldData.forEach(function (field) {
+                field[0].lastChild.remove();
+                field[0].insertAdjacentHTML('afterbegin', field[1]);
+            });
+        },
+
         closeAlert: function (element) {
             element.parentNode.parentNode.remove();
         },

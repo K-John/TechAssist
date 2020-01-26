@@ -33,6 +33,11 @@
             data.labels.push(newItem);
         },
 
+        updateItem: function (item) {
+
+            data.labels[data.labels.findIndex(label => label.labelSpot == item.labelSpot)] = item;
+        },
+
         getBiggestLabelId: function () {
 
             var largest = 0;

@@ -1,62 +1,5 @@
 ﻿var controller = (function (LabelCtrl, DBCtrl, UICtrl) {
 
-    var setupEventListeners = function () {
-
-        var DOM = UICtrl.getDOMstrings();
-        // Submit in AddLabel
-        document.querySelector("#" + DOM.inputSubmit).addEventListener('click', validateInput);
-
-        document.addEventListener('keypress', function (event) {
-            // Enter Key in AddLabel
-            if ((event.keyCode === 13 || event.which === 13) &&
-                (document.activeElement === document.getElementById(DOM.inputSchoolId)
-                    || document.activeElement === document.getElementById(DOM.inputFirstName)
-                    || document.activeElement === document.getElementById(DOM.inputLastName)
-                    || document.activeElement === document.getElementById(DOM.inputBarcode)
-                    || document.activeElement === document.getElementById(DOM.inputLabelSpot)))
-            {
-                validateInput();
-            }
-            if ((event.keyCode === 13 || event.which === 13) &&
-                (document.activeElement === document.getElementById(DOM.editSchoolId)
-                    || document.activeElement === document.getElementById(DOM.editFirstName)
-                    || document.activeElement === document.getElementById(DOM.editLastName)
-                    || document.activeElement === document.getElementById(DOM.editBarcode)))
-            {
-                validateEdit(event.target.parentNode.parentNode);
-            }
-        });
-        // Clear button in LabelList
-        document.querySelector("#" + DOM.listClear).addEventListener('click', clearDB);
-        // See More button in LabelList
-        document.querySelector("#" + DOM.expandList).addEventListener('click', expandList);
-
-        document.addEventListener('click', function (event) {
-            // Close button on alert
-            if (event.target.parentNode.id == DOM.closeAlert) {
-                UICtrl.closeAlert(event.target);
-            }
-            // Remove button on label in LabelList
-            if (event.target.parentNode.parentNode.id == DOM.listRow && DOM.removeLabel != undefined && event.target.id == DOM.removeLabel) {
-                ctrlRemoveLabel(event.target.parentNode.parentNode);
-            }
-            // Edit button on label in LabelList
-            if (event.target.parentNode.parentNode.id == DOM.listRow && DOM.editLabel != undefined && event.target.id == DOM.editLabel) {
-                console.log("Editing label!");
-                ctrlEditLabel(event.target.parentNode.parentNode);
-            }
-            // Save Edit button on label in LabelList
-            // TODO: Error here saying 'parentNode is null'
-            if (event.target.parentNode.parentNode.id == DOM.listRow && DOM.editSave != null && event.target.id == DOM.editSave) {
-                validateEdit(event.target.parentNode.parentNode);
-            }
-            // Cancel Edit button on label in LabelList
-            if (event.target.parentNode.parentNode.id == DOM.listRow && DOM.editCancel != null && event.target.id == DOM.editCancel) {
-
-            }
-        });
-    };
-
     var getAPIInfo = function (callback) {
 
         var xmlhttp = new XMLHttpRequest();
@@ -72,9 +15,53 @@
         xmlhttp.send();
     };
 
-    var validateInput = function () {
+    var getDBItems = function () {
+
+        DBCtrl.getAllItems(function (success, result) {
+
+            if (!success) {
+                UICtrl.addAlert("<strong>Error.</strong> There was an issue getting your data from the database. Please refresh the page to try again.", false, true);
+            } else {
+                var sortedResult = LabelCtrl.insertionSort(result);
+                sortedResult.forEach(function (newItem) {
+                    LabelCtrl.addItem(newItem);
+                    UICtrl.addListItem(newItem, LabelCtrl.getSchoolAcronym(newItem.schoolId), 0);
+                    UICtrl.handleExpandingList(LabelCtrl.getLabelCount());
+                    UICtrl.setLabelCount(LabelCtrl.getLabelCount());
+                    UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
+                });
+            }
+        });
+    };
+
+    var addLabel = function () {
 
         var input = UICtrl.getInput();
+
+        if (!validateInput(input)) { return; };
+
+        var newItem = LabelCtrl.newLabel(input.schoolId, UICtrl.capFirstLetter(input.firstName), UICtrl.capFirstLetter(input.lastName), input.barcode, input.labelSpot);
+
+        DBCtrl.addToDB(newItem, newItem.labelSpot, function (result, err) {
+            var content;
+            if (!result) {
+                content = "<strong>Error.</strong> There was an issue adding <i>" + newItem.firstName + " " + newItem.lastName + "</i> from <i>" + LabelCtrl.getSchoolAcronym(newItem.schoolId) + "</i>. <br><br><strong>Details:</strong> " + err;
+                UICtrl.addAlert(content, false, false);
+            } else {
+                content = "<strong>Success!</strong> <i>" + newItem.firstName + " " + newItem.lastName + "</i> from <i>" + LabelCtrl.getSchoolAcronym(newItem.schoolId) + "</i> has been added.";
+                UICtrl.addAlert(content, true, false);
+
+                LabelCtrl.addItem(newItem);
+                UICtrl.addListItem(newItem, LabelCtrl.getSchoolAcronym(newItem.schoolId), 0);
+                UICtrl.handleExpandingList(LabelCtrl.getLabelCount());
+                UICtrl.setLabelCount(LabelCtrl.getLabelCount());
+                UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
+            }
+        });
+    };
+
+    var validateInput = function (input) {
+
         var errArray = [];
         var err = "<strong>Error.</strong> There are issue(s) with the input:<br>";
 
@@ -112,16 +99,41 @@
         }
 
         // No errors were found with the input, proceed with creating the label
-        ctrlAddLabel(LabelCtrl.newLabel(input.schoolId, UICtrl.capFirstLetter(input.firstName), UICtrl.capFirstLetter(input.lastName), input.barcode, input.labelSpot));
+        return true;
     };
 
-    var validateEdit = function (labelElement) {
+    var startEditLabel = function (labelElement) {
+
+        UICtrl.startEditLabel(LabelCtrl.getLabelBySpot(labelElement.childNodes[4].textContent), labelElement, LabelCtrl.getSchools());
+    };
+
+    var finishEditLabel = function (labelElement) {
 
         var input = UICtrl.getEditInput(labelElement);
+        var labelSpot = labelElement.childNodes[4].textContent;
+
+        if (!validateEdit(input)) { return; }
+
+        var updatedItem = LabelCtrl.newLabel(input.schoolId, input.firstName, input.lastName, input.barcode, labelSpot);
+
+        DBCtrl.updateItem(updatedItem, labelSpot, function (result, err) {
+            var content;
+            if (!result) {
+                content = "<strong>Error.</strong> There was an issue updating <i>" + updatedItem.firstName + " " + updatedItem.lastName + "</i> from <i>" + LabelCtrl.getSchoolAcronym(updatedItem.schoolId) + "</i>. <br><br><strong>Details:</strong> " + err;
+                UICtrl.addAlert(content, false, false);
+            } else {
+                content = "<strong>Success!</strong> <i>" + updatedItem.firstName + " " + updatedItem.lastName + "</i> from <i>" + LabelCtrl.getSchoolAcronym(updatedItem.schoolId) + "</i> has been updated.";
+                UICtrl.addAlert(content, true, false);
+                LabelCtrl.updateItem(updatedItem);
+                UICtrl.updateLabel(updatedItem, labelElement, LabelCtrl.getSchoolAcronym(updatedItem.schoolId));
+            }
+        });
+    };
+
+    var validateEdit = function (input) {
+
         var errArray = [];
         var err = "<strong>Error.</strong> There are issue(s) with the edit:<br>";
-
-        var originalLabel = LabelCtrl.getLabelBySpot(labelElement.childNodes[4].textContent);
 
         if (firstName == "" || input.lastName == "" || input.barcode == "") {
 
@@ -147,83 +159,17 @@
             UICtrl.addAlert(err, false, false);
             return false;
         }
-        console.log("Edit is valid");
+        return true;
     };
 
-    var ctrlAddLabel = function (newItem) {
+    var cancelEditLabel = function (labelElement) {
 
-        DBCtrl.addToDB(newItem, newItem.labelSpot, function (result, err) {
-            var content;
-            if (!result) {
-                content = "<strong>Error.</strong> There was an issue adding <i>" + newItem.firstName + " " + newItem.lastName + "</i> from <i>" + LabelCtrl.getSchoolAcronym(newItem.schoolId) + "</i>. <br><br><strong>Details:</strong> " + err;
-                UICtrl.addAlert(content, false, false);
-            } else {
-                content = "<strong>Success!</strong> <i>" + newItem.firstName + " " + newItem.lastName + "</i> from <i>" + LabelCtrl.getSchoolAcronym(newItem.schoolId) + "</i> has been added.";
-                UICtrl.addAlert(content, true, false);
-            }
-        });
-        LabelCtrl.addItem(newItem);
-        UICtrl.addListItem(newItem, LabelCtrl.getSchoolAcronym(newItem.schoolId), 0);
-        UICtrl.handleExpandingList(LabelCtrl.getLabelCount());
-        UICtrl.setLabelCount(LabelCtrl.getLabelCount());
-        UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
+        var originalLabel = LabelCtrl.getLabelBySpot(labelElement.childNodes[4].textContent);
+
+        UICtrl.updateLabel(originalLabel, labelElement, LabelCtrl.getSchoolAcronym(originalLabel.schoolId));
     };
 
-    var expandList = function () {
-
-        var threshhold = UICtrl.getExpandListThreshhold();
-        var labelCount = LabelCtrl.getLabelCount();
-
-        var start = labelCount - UICtrl.getUILabelCount();
-        var end = (start - threshhold <= 0) ? 1 : (start - threshhold);
-
-        for (i = start; i >= end; i--) {
-            var label = LabelCtrl.getLabelByIndex(i - 1);
-            UICtrl.addListItem(label, LabelCtrl.getSchoolAcronym(label.schoolId), 1);
-        }
-        UICtrl.addExpandingListCount();
-        UICtrl.handleExpandingList(labelCount);
-    };
-
-    var getDBItems = function () {
-
-        DBCtrl.getAllItems(function (success, result) {
-
-            if (!success) {
-                UICtrl.addAlert("<strong>Error.</strong> There was an issue getting your data from the database. Please refresh the page to try again.", false, true);
-            } else {
-                var sortedResult = LabelCtrl.insertionSort(result);
-                sortedResult.forEach(function (newItem) {
-                    LabelCtrl.addItem(newItem);
-                    UICtrl.addListItem(newItem, LabelCtrl.getSchoolAcronym(newItem.schoolId), 0);
-                    UICtrl.handleExpandingList(LabelCtrl.getLabelCount());
-                    UICtrl.setLabelCount(LabelCtrl.getLabelCount());
-                    UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
-                });
-            }
-        });
-    };
-
-    var clearDB = function () {
-        var content;
-        DBCtrl.clearAllItems(function (result, err) {
-            if (!result) {
-                content = "<strong>Error.</strong> There was an error clearing the list. Please refresh the page and try again.<br><br><strong>Details: </strong>" + err;
-                UICtrl.addAlert(content,false,false);
-            } else {
-                UICtrl.clearList();
-                LabelCtrl.clearLabelData();
-                UICtrl.handleExpandingList(LabelCtrl.getLabelCount());
-                UICtrl.setLabelCount(LabelCtrl.getLabelCount());
-                UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
-
-                content = "<strong>Success!</strong> The database list has been cleared.";
-                UICtrl.addAlert(content, true, false);
-            }
-        });
-    };
-
-    var ctrlRemoveLabel = function (label) {
+    var removeLabel = function (label) {
 
         var labelSpot = label.childNodes[4].textContent;
 
@@ -244,10 +190,101 @@
         });
     };
 
-    var ctrlEditLabel = function (labelElement) {
+    var clearDB = function () {
+        var content;
+        DBCtrl.clearAllItems(function (result, err) {
+            if (!result) {
+                content = "<strong>Error.</strong> There was an error clearing the list. Please refresh the page and try again.<br><br><strong>Details: </strong>" + err;
+                UICtrl.addAlert(content, false, false);
+            } else {
+                UICtrl.clearList();
+                LabelCtrl.clearLabelData();
+                UICtrl.handleExpandingList(LabelCtrl.getLabelCount());
+                UICtrl.setLabelCount(LabelCtrl.getLabelCount());
+                UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
 
-        var label = LabelCtrl.getLabelBySpot(labelElement.childNodes[4].textContent);
-        UICtrl.startEditLabel(label, labelElement, LabelCtrl.getSchools());
+                content = "<strong>Success!</strong> The database list has been cleared.";
+                UICtrl.addAlert(content, true, false);
+            }
+        });
+    };
+
+    var expandList = function () {
+
+        var threshhold = UICtrl.getExpandListThreshhold();
+        var labelCount = LabelCtrl.getLabelCount();
+
+        var start = labelCount - UICtrl.getUILabelCount();
+        var end = (start - threshhold <= 0) ? 1 : (start - threshhold);
+
+        for (i = start; i >= end; i--) {
+            var label = LabelCtrl.getLabelByIndex(i - 1);
+            UICtrl.addListItem(label, LabelCtrl.getSchoolAcronym(label.schoolId), 1);
+        }
+        UICtrl.addExpandingListCount();
+        UICtrl.handleExpandingList(labelCount);
+    };
+
+    var setupEventListeners = function () {
+
+        var DOM = UICtrl.getDOMstrings();
+        // Submit in AddLabel
+        document.querySelector("#" + DOM.inputSubmit).addEventListener('click', addLabel);
+        // Clear button in LabelList
+        document.querySelector("#" + DOM.listClear).addEventListener('click', clearDB);
+        // See More button in LabelList
+        document.querySelector("#" + DOM.expandList).addEventListener('click', expandList);
+
+        // Pressing Enter
+        document.addEventListener('keypress', function (event) {
+            // Enter Key in AddLabel
+            if ((event.keyCode === 13 || event.which === 13) &&
+                (document.activeElement === document.getElementById(DOM.inputSchoolId)
+                    || document.activeElement === document.getElementById(DOM.inputFirstName)
+                    || document.activeElement === document.getElementById(DOM.inputLastName)
+                    || document.activeElement === document.getElementById(DOM.inputBarcode)
+                    || document.activeElement === document.getElementById(DOM.inputLabelSpot))) {
+                addLabel();
+                return;
+            }
+            if ((event.keyCode === 13 || event.which === 13) &&
+                (document.activeElement === document.getElementById(DOM.editSchoolId)
+                    || document.activeElement === document.getElementById(DOM.editFirstName)
+                    || document.activeElement === document.getElementById(DOM.editLastName)
+                    || document.activeElement === document.getElementById(DOM.editBarcode))) {
+                finishEditLabel(event.target.parentNode.parentNode);
+                return;
+            }
+        });
+        // Clicking something with a parent node
+        document.addEventListener('click', function (event) {
+            // Close button on alert
+            if (event.target.parentNode.id == DOM.closeAlert) {
+                UICtrl.closeAlert(event.target);
+                return;
+            }
+            // Remove button on label in LabelList
+            if (event.target.parentNode.parentNode.id == DOM.listRow && DOM.removeLabel != undefined && event.target.id == DOM.removeLabel) {
+                removeLabel(event.target.parentNode.parentNode);
+                return;
+            }
+            // Edit button on label in LabelList
+            if (event.target.parentNode.parentNode.id == DOM.listRow && DOM.editLabel != undefined && event.target.id == DOM.editLabel) {
+                console.log("Editing label!");
+                startEditLabel(event.target.parentNode.parentNode);
+                return;
+            }
+            // Save Edit button on label in LabelList
+            if (event.target.parentNode.parentNode.id == DOM.listRow && event.target.id == DOM.editSave) {
+                finishEditLabel(event.target.parentNode.parentNode);
+                return;
+            }
+            // Cancel Edit button on label in LabelList
+            if (event.target.parentNode.parentNode.id == DOM.listRow && event.target.id == DOM.editCancel) {
+                cancelEditLabel(event.target.parentNode.parentNode);
+                return;
+            }
+        });
     };
 
     return {

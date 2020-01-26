@@ -63,6 +63,19 @@
             };
         },
 
+        updateItem: function (item, key, callback) {
+
+            request = db.transaction(objectStoreName, "readwrite").objectStore(objectStoreName).put(item, key);
+
+            request.onsuccess = function () {
+                callback(true);
+            };
+
+            request.onerror = function () {
+                callback(false, request.error);
+            };
+        },
+
         clearAllItems: function (callback) {
 
             request = db.transaction(objectStoreName, "readwrite").objectStore(objectStoreName).clear();
