@@ -7,7 +7,7 @@ End Code
     <meta name="viewport" content="width=device-width" />
     <title>LabelSheet</title>
     <link rel="stylesheet" href="/content/labelsheet.css" />
-    <script src="~/Scripts/JsBarcode.code128.min.js"></script>
+    <script src="~/Scripts/JsBarcode.code39.min.js"></script>
 </head>
 <body>
     <div class="page" id="pagecontainer"></div>

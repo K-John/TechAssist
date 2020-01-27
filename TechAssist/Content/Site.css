@@ -68,8 +68,8 @@ textarea {
 }
 
 .active-label, active-label:hover {
-    background: #ff000010 !important;
-    border-color: #cc9696;
+    background: #ff810010 !important;
+    border-color: #ccb296;
 }
 
 .added-label, .added-label:hover {

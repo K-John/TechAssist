@@ -2,7 +2,7 @@
 
     var UILabelCount = 0;
     var expandListCount = 1;
-    var expandListThreshhold = 5;
+    var expandListThreshhold = 10;
     var expandListStatus = false;
 
     var DOMstrings = {
@@ -37,7 +37,11 @@
         temporaryAlert: 'tempalert',
         permanentAlert: 'permalert',
         closeAlert: 'closealert',
-        pageContainer: 'pagecontainer'
+        pageContainer: 'pagecontainer',
+        previewContainer: 'previewcontainer',
+        previewLabel: 'previewlabel',
+        previewActive: 'active-label',
+        previewAdded: 'added-label'
     };
 
     return {
@@ -172,7 +176,8 @@
             var schoolOptions = '';
 
             schools.forEach(function (school) {
-                schoolOptions = (school.schoolId == obj.schoolId) ? schoolOptions.concat('<option value="' + school.schoolId + '" selected>' + school.schoolAcronym + '</option>') : schoolOptions = schoolOptions.concat('<option value="' + school.schoolId + '">' + school.schoolAcronym + '</option>') ;
+                schoolAcronym = (school.schoolAcronym != null) ? school.schoolAcronym : '';
+                schoolOptions = (school.schoolId == obj.schoolId) ? schoolOptions.concat('<option value="' + school.schoolId + '" selected>' + schoolAcronym + '</option>') : schoolOptions = schoolOptions.concat('<option value="' + school.schoolId + '">' + schoolAcronym + '</option>') ;
             });
 
             var fieldData = [
@@ -248,11 +253,72 @@
             while (container.childNodes.length > 2) {
                 container.lastChild.remove();
             }
+            var labels = document.querySelectorAll("." + DOMstrings.previewAdded);
+
+            [].forEach.call(labels, function (el) {
+                el.classList.remove(DOMstrings.previewAdded);
+            });
         },
 
         removeLabel: function (label) {
             label.remove();
             UILabelCount--;
+        },
+
+        updateLabelPreview: function (labelSpot, status) {
+
+            if (parseInt(labelSpot) > 30) { return; }
+
+            var label = document.getElementById(DOMstrings.previewContainer).childNodes[parseInt(labelSpot) * 2 - 1].childNodes[1];
+
+            if (status) {
+                label.classList.add(DOMstrings.previewAdded);
+            } else {
+                label.classList.remove(DOMstrings.previewAdded);
+            }
+        },
+
+        setActivePreview: function (labelSpot) {
+
+            var container = document.getElementById(DOMstrings.previewContainer);
+            var labels = document.querySelectorAll("." + DOMstrings.previewActive);
+
+            [].forEach.call(labels, function (el) {
+                el.classList.remove(DOMstrings.previewActive);
+            });
+
+            if (labelSpot != undefined && parseInt(labelSpot) <= 30) {
+                container.childNodes[parseInt(labelSpot) * 2 - 1].childNodes[1].classList.add(DOMstrings.previewActive);
+            }
+        },
+
+        setActiveLabel: function (element) {
+
+            if (parseInt(labelSpot) > 30) { return; }
+
+            if (element.classList.contains(DOMstrings.previewAdded)) { return; }
+
+            var labelSpot = parseInt(element.textContent);
+
+            document.getElementById(DOMstrings.inputLabelSpot).value = labelSpot;
+            document.getElementById(DOMstrings.inputFirstName).focus();
+
+            [].forEach.call(document.querySelectorAll("." + DOMstrings.previewActive), function (el) {
+                el.classList.remove(DOMstrings.previewActive);
+            });
+
+            element.classList.add(DOMstrings.previewActive);
+        },
+
+        resizeText: function () {
+
+            var text = document.querySelectorAll("#resize");
+
+            [].forEach.call(text, function (el) {
+                if (el.scrollWidth > el.clientWidth) {
+                    el.style.fontSize = "smaller";
+                }
+            });
         }
     };
 })();

@@ -26,6 +26,7 @@
                 sortedResult.forEach(function (newItem) {
                     LabelCtrl.addItem(newItem);
                     UICtrl.addListItem(newItem, LabelCtrl.getSchoolAcronym(newItem.schoolId), 0);
+                    UICtrl.updateLabelPreview(newItem.labelSpot, true);
                     UICtrl.handleExpandingList(LabelCtrl.getLabelCount());
                     UICtrl.setLabelCount(LabelCtrl.getLabelCount());
                     UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
@@ -53,6 +54,7 @@
 
                 LabelCtrl.addItem(newItem);
                 UICtrl.addListItem(newItem, LabelCtrl.getSchoolAcronym(newItem.schoolId), 0);
+                UICtrl.updateLabelPreview(newItem.labelSpot, true);
                 UICtrl.handleExpandingList(LabelCtrl.getLabelCount());
                 UICtrl.setLabelCount(LabelCtrl.getLabelCount());
                 UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
@@ -166,7 +168,7 @@
 
         var originalLabel = LabelCtrl.getLabelBySpot(labelElement.childNodes[4].textContent);
 
-        UICtrl.updateLabel(originalLabel, labelElement, LabelCtrl.getSchoolAcronym(originalLabel.schoolId));
+        UICtrl.updateLabel(LabelCtrl.getLabelBySpot(labelElement.childNodes[4].textContent), labelElement, LabelCtrl.getSchoolAcronym(originalLabel.schoolId));
     };
 
     var removeLabel = function (label) {
@@ -181,6 +183,7 @@
                 // Handle expanding list to see if we need to load labels once reached under view limit after deleting
                 LabelCtrl.removeLabel(labelSpot);
                 UICtrl.removeLabel(label);
+                UICtrl.updateLabelPreview(labelSpot, false);
                 UICtrl.handleExpandingList();
                 UICtrl.setLabelCount(LabelCtrl.getLabelCount());
 
@@ -234,6 +237,8 @@
         document.querySelector("#" + DOM.listClear).addEventListener('click', clearDB);
         // See More button in LabelList
         document.querySelector("#" + DOM.expandList).addEventListener('click', expandList);
+        // Update Label preview with active label
+        document.querySelector("#" + DOM.inputLabelSpot).addEventListener('input', function (event) { UICtrl.setActivePreview(event.target.value); });
 
         // Pressing Enter
         document.addEventListener('keypress', function (event) {
@@ -282,6 +287,11 @@
             // Cancel Edit button on label in LabelList
             if (event.target.parentNode.parentNode.id == DOM.listRow && event.target.id == DOM.editCancel) {
                 cancelEditLabel(event.target.parentNode.parentNode);
+                return;
+            }
+            // Clicking Label on LabelPreview
+            if (event.target.parentNode.parentNode.id == DOM.previewContainer && event.target.id == DOM.previewLabel) {
+                UICtrl.setActiveLabel(event.target);
                 return;
             }
         });
