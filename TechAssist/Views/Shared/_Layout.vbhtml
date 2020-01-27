@@ -16,12 +16,11 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("Tech Assist", "Index", "Label", New With {.area = ""}, New With {.class = "navbar-brand"})
+                @Html.ActionLink("Home", "Index", "Label", New With {.area = ""}, New With {.class = "navbar-brand"})
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Label", "Index", "Label")</li>
-                    <li>@Html.ActionLink("Fake Labels", "GenerateTestData", "Label")</li>
+                    <li>@Html.ActionLink("Test Data", "GenerateTestData", "Label")</li>
                 </ul>
             </div>
         </div>
@@ -30,7 +29,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - <a href="mailto:kendall.johnson@cmcss.net">Kendall Johnson</a></p>
+            <p>&copy; @DateTime.Now.Year - <a href="mailto:kendall.johnson@cmcss.net">Kendall Johnson</a><span id="version"></span></p>
         </footer>
     </div>
 </body>

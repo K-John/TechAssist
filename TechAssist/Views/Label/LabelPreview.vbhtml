@@ -1,4 +1,4 @@
-﻿<h4>Label Page Preview</h4>
+﻿<h4><div style="width: fit-content;" data-tooltip="Click a label spot below to select it!">Label Page Preview <span class="glyphicon glyphicon-info-sign info-icon"></span></div></h4>
 <hr />
 <div class="row">
     <div class="label-page clearfix" id="previewcontainer">

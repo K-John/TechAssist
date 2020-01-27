@@ -1,5 +1,7 @@
 ﻿var controller = (function (LabelCtrl, DBCtrl, UICtrl) {
 
+    var version = "1.0.0";
+
     var getAPIInfo = function (callback) {
 
         var xmlhttp = new XMLHttpRequest();
@@ -30,6 +32,7 @@
                     UICtrl.handleExpandingList(LabelCtrl.getLabelCount());
                     UICtrl.setLabelCount(LabelCtrl.getLabelCount());
                     UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
+                    UICtrl.setActivePreview(parseInt(LabelCtrl.getBiggestLabelId()) + 1);
                 });
             }
         });
@@ -58,6 +61,7 @@
                 UICtrl.handleExpandingList(LabelCtrl.getLabelCount());
                 UICtrl.setLabelCount(LabelCtrl.getLabelCount());
                 UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
+                UICtrl.setActivePreview(parseInt(LabelCtrl.getBiggestLabelId()) + 1);
             }
         });
     };
@@ -205,6 +209,7 @@
                 UICtrl.handleExpandingList(LabelCtrl.getLabelCount());
                 UICtrl.setLabelCount(LabelCtrl.getLabelCount());
                 UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
+                UICtrl.setActivePreview(parseInt(LabelCtrl.getBiggestLabelId()) + 1);
 
                 content = "<strong>Success!</strong> The database list has been cleared.";
                 UICtrl.addAlert(content, true, false);
@@ -299,7 +304,7 @@
 
     return {
         init: function () {
-
+            UICtrl.setVersion(version);
             setupEventListeners();
             DBCtrl.establishDB(function (result, err) {
                 if (!result) {

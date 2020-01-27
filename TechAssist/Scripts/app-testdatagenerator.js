@@ -53870,6 +53870,7 @@
         ];
     var schoolId, barcode, labelSpot, db, request;
     var objectStoreName = "labels";
+    var dbName = "label-db";
     var x = 0;
 
     var randomInt = function (min, max) {
@@ -53886,7 +53887,7 @@
     };
 
     var establishDB = function (callback) {
-        var openRequest = indexedDB.open('test-db0', 1);
+        var openRequest = indexedDB.open(dbName, 1);
 
         openRequest.onerror = function () {
             callback(false, openRequest.error);
@@ -53920,6 +53921,9 @@
             if (x < count) {
                 generate(count);
             } else {
+                console.log("Made it");
+                var goBackLink = '<br><a href="/label/index">You\'re done! Go back home and see your new labels.</a>';
+                document.getElementById("progresslabelcount").insertAdjacentHTML('beforeend', goBackLink);
             }
         });
     };

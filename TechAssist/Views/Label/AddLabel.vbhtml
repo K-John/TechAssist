@@ -36,7 +36,7 @@
         </div>
 
         <div class="form-group" id="labelSpot">
-            @Html.LabelFor(Function(model) model.LabelModel.LabelPlacement, htmlAttributes:=New With {.class = "control-label col-md-3"})
+            <label class="control-label col-md-3" for="LabelModel_LabelPlacement" data-tooltip="Where do you want your label to be on the sheet?">Label Spot <span class="glyphicon glyphicon-info-sign info-icon" style="vertical-align: text-bottom;"></span></label>
             <div class="col-md-9">
                 @Html.EditorFor(Function(model) model.LabelModel.LabelPlacement, New With {.htmlAttributes = New With {.class = "form-control"}})
                 @Html.ValidationMessageFor(Function(model) model.LabelModel.LabelPlacement, "", New With {.class = "text-danger"})

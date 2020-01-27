@@ -1,12 +1,13 @@
 ﻿var DBController = (function () {
 
     var db, request;
+    var dbName = "label-db";
     var objectStoreName = "labels";
 
     return {
 
         establishDB: function (callback) {
-            var openRequest = indexedDB.open('test-db0', 1);
+            var openRequest = indexedDB.open(dbName, 1);
 
             openRequest.onerror = function () {
                 callback(false, openRequest.error);

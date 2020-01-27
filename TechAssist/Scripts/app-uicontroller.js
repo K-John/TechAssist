@@ -41,7 +41,8 @@
         previewContainer: 'previewcontainer',
         previewLabel: 'previewlabel',
         previewActive: 'active-label',
-        previewAdded: 'added-label'
+        previewAdded: 'added-label',
+        version: 'version'
     };
 
     return {
@@ -319,6 +320,10 @@
                     el.style.fontSize = "smaller";
                 }
             });
+        },
+
+        setVersion: function (version) {
+            document.getElementById(DOMstrings.version).textContent = " - v. " + version;
         }
     };
 })();
