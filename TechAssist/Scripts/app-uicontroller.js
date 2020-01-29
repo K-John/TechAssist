@@ -12,6 +12,8 @@
         inputBarcode: 'LabelModel_Barcode',
         inputLabelSpot: 'LabelModel_LabelPlacement',
         inputSubmit: 'submit',
+        inputDuplicate: 'duplicate',
+        inputRow: '_inputrow',
         listSchoolAcronym: 'schoolacronym',
         listFirstName: 'firstname',
         listLastName: 'lastname',
@@ -61,7 +63,8 @@
                 firstName: document.querySelector("#" + DOMstrings.inputFirstName).value,
                 lastName: document.querySelector("#" + DOMstrings.inputLastName).value,
                 barcode: document.querySelector("#" + DOMstrings.inputBarcode).value,
-                labelSpot: document.querySelector("#" + DOMstrings.inputLabelSpot).value
+                labelSpot: document.querySelector("#" + DOMstrings.inputLabelSpot).value,
+                duplicate: document.querySelector("#" + DOMstrings.inputDuplicate).checked
             }
         },
         getEditInput: function (element) {
@@ -239,9 +242,9 @@
 
         // Get the input's title from the supplied element ID
         addAlertError: function (field) {
-            document.getElementById(field).classList.add('has-error');
+            document.getElementById(field + DOMstrings.inputRow).classList.add('has-error');
 
-            return document.getElementById(field).childNodes[1].textContent;
+            return document.getElementById(field + DOMstrings.inputRow).childNodes[1].textContent;
         },
 
         capFirstLetter: function (string) {
@@ -320,6 +323,19 @@
                     el.style.fontSize = "smaller";
                 }
             });
+        },
+
+        toggleInputVisibility: function (schoolAcronym) {
+
+            var element = document.getElementById(DOMstrings.inputDuplicate);
+
+            if (!schoolAcronym.includes("MS") && !schoolAcronym.includes("HS")) {
+                element.checked = false;
+                element.parentNode.parentNode.style.display = "none";
+                return;
+            }
+
+            element.parentNode.parentNode.style.display = "block";
         },
 
         setVersion: function (version) {

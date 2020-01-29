@@ -49,7 +49,7 @@
                     largest = data.labels[i].labelSpot;
                 }
             }
-            return largest;
+            return parseInt(largest);
         },
 
         insertionSort: function (arr) {

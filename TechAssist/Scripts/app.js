@@ -1,6 +1,6 @@
 ﻿var controller = (function (LabelCtrl, DBCtrl, UICtrl) {
 
-    var version = "1.0.1";
+    var version = "1.1.0";
 
     var getAPIInfo = function (callback) {
 
@@ -38,13 +38,15 @@
         });
     };
 
-    var addLabel = function () {
+    var addLabel = function (event, duplicate) {
 
         var input = UICtrl.getInput();
 
-        if (!validateInput(input)) { return; };
+        // Check if we're making duplicate labels
+        if (duplicate == undefined) { if (!validateInput(input)) { return; } }
+        var labelSpot = (duplicate != undefined && duplicate) ? LabelCtrl.getBiggestLabelId() + 1 : input.labelSpot;
 
-        var newItem = LabelCtrl.newLabel(input.schoolId, UICtrl.capFirstLetter(input.firstName), UICtrl.capFirstLetter(input.lastName), input.barcode, input.labelSpot);
+        var newItem = LabelCtrl.newLabel(input.schoolId, UICtrl.capFirstLetter(input.firstName), UICtrl.capFirstLetter(input.lastName), input.barcode, labelSpot);
 
         DBCtrl.addToDB(newItem, newItem.labelSpot, function (result, err) {
             var content;
@@ -60,8 +62,13 @@
                 UICtrl.updateLabelPreview(newItem.labelSpot, true);
                 UICtrl.handleExpandingList(LabelCtrl.getLabelCount());
                 UICtrl.setLabelCount(LabelCtrl.getLabelCount());
-                UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
-                UICtrl.setActivePreview(parseInt(LabelCtrl.getBiggestLabelId()) + 1);
+
+                if (input.duplicate && duplicate == undefined) {
+                    addLabel(false, true);
+                } else {
+                    UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
+                    UICtrl.setActivePreview(parseInt(LabelCtrl.getBiggestLabelId()) + 1);
+                }
             }
         });
     };
@@ -72,9 +79,9 @@
         var err = "<strong>Error.</strong> There are issue(s) with the input:<br>";
 
         for (field in input) {
-            document.getElementById(field).classList.remove('has-error'); //Remove any existing errors from previous validation
+            document.getElementById(field + "_inputrow").classList.remove('has-error'); //Remove any existing errors from previous validation
 
-            if (input[field] == "") {
+            if (input[field] == "" && field != "duplicate") {
                 errArray.push("<br>- <strong>" + UICtrl.addAlertError(field) + "</strong> cannot be empty.");
             }
         }
@@ -141,7 +148,7 @@
         var errArray = [];
         var err = "<strong>Error.</strong> There are issue(s) with the edit:<br>";
 
-        if (firstName == "" || input.lastName == "" || input.barcode == "") {
+        if (input.firstName == "" || input.lastName == "" || input.barcode == "") {
 
             errArray.push("<br>- <strong>Input</strong> cannot be empty.");
         }
@@ -244,6 +251,8 @@
         document.querySelector("#" + DOM.expandList).addEventListener('click', expandList);
         // Update Label preview with active label
         document.querySelector("#" + DOM.inputLabelSpot).addEventListener('input', function (event) { UICtrl.setActivePreview(event.target.value); });
+        // Change school in AddLabel
+        document.querySelector("#" + DOM.inputSchoolId).addEventListener('change', function (event) { UICtrl.toggleInputVisibility(LabelCtrl.getSchoolAcronym(event.target.value)); });
 
         // Pressing Enter
         document.addEventListener('keypress', function (event) {
@@ -253,7 +262,8 @@
                     || document.activeElement === document.getElementById(DOM.inputFirstName)
                     || document.activeElement === document.getElementById(DOM.inputLastName)
                     || document.activeElement === document.getElementById(DOM.inputBarcode)
-                    || document.activeElement === document.getElementById(DOM.inputLabelSpot))) {
+                    || document.activeElement === document.getElementById(DOM.inputLabelSpot)
+                    || document.activeElement === document.getElementById(DOM.inputDuplicate))) {
                 addLabel();
                 return;
             }
