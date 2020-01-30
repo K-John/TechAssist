@@ -39,19 +39,6 @@ Namespace Controllers
             Return PartialView()
         End Function
 
-        ' POST: LogData
-        <HttpPost()>
-        Function LogData(schoolAcronym As String, labelCount As String) As ActionResult
-            Dim dateNow As Date = Date.Now
-            Dim FILE_NAME As String = "/testsave.txt"
-            Dim inputString As String = $"School: {schoolAcronym}{vbTab}Count: {labelCount}{vbTab}Time: {dateNow}"
-            Dim objWriter As New IO.StreamWriter(FILE_NAME, True)
-            objWriter.WriteLine(inputString)
-            objWriter.Close()
-
-            Return RedirectToAction("Index")
-        End Function
-
         ' GET: PartialView LabelImport
         Function LabelImport() As ActionResult
             Return PartialView()
