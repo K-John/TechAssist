@@ -44,7 +44,7 @@
 
         // Check if we're making duplicate labels
         if (duplicate == undefined) { if (!validateInput(input)) { return; } }
-        var labelSpot = (duplicate != undefined && duplicate) ? LabelCtrl.getBiggestLabelId() + 1 : input.labelSpot;
+        var labelSpot = (duplicate != undefined && duplicate) ? (LabelCtrl.getBiggestLabelId() + 1).toString() : input.labelSpot;
 
         var newItem = LabelCtrl.newLabel(input.schoolId, UICtrl.capFirstLetter(input.firstName), UICtrl.capFirstLetter(input.lastName), input.barcode, labelSpot);
 

@@ -33,6 +33,28 @@ textarea {
     padding-right: 10px;
 }
 
+.navbar-inverse {
+    background-color: #cec5b4;
+    border-color: #9c937f;
+    box-shadow: 0 0 15px #0000002e;
+}
+
+.navbar-inverse .navbar-brand {
+    color: #4a453b;
+}
+
+.navbar-inverse .navbar-nav > li > a {
+    color: #4a453b;
+}
+
+.navbar-inverse .navbar-nav > li > a:hover, .navbar-inverse .navbar-nav > li > a:focus {
+    color: #6d665b;
+}
+
+.navbar-inverse .navbar-brand:hover, .navbar-inverse .navbar-brand:focus {
+    color: #6d665b;
+}
+
 /* Label Preview CSS */
 .label-page {
     margin: 5px;

@@ -329,7 +329,7 @@
 
             var element = document.getElementById(DOMstrings.inputDuplicate);
 
-            if (!schoolAcronym.includes("MS") && !schoolAcronym.includes("HS")) {
+            if (schoolAcronym == null || (!schoolAcronym.includes("MS") && !schoolAcronym.includes("HS"))) {
                 element.checked = false;
                 element.parentNode.parentNode.style.display = "none";
                 return;
