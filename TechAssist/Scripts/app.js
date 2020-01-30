@@ -1,6 +1,6 @@
 ﻿var controller = (function (LabelCtrl, DBCtrl, UICtrl) {
 
-    var version = "1.1.1";
+    var version = "1.1.2";
 
     var getAPIInfo = function (callback) {
 
