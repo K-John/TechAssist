@@ -17,6 +17,20 @@
         xmlhttp.send();
     };
 
+    var logData = function (schoolAcronym, count) {
+
+        var labelCount = count.toString();
+        $.ajax({
+            type: "POST",
+            url: "/label/logdata",
+            data: {
+                schoolAcronym: schoolAcronym,
+                labelCount: labelCount
+            },
+            success: function (data) { }
+        });
+    };
+
     var getDBItems = function () {
         DBCtrl.getAllItems(function (success, result) {
 
@@ -64,6 +78,8 @@
 
         JsBarcode(".barcode").init();
         UICtrl.resizeText();
+        console.log(LabelCtrl.getSchoolAcronym(labels[0].schoolId));
+        logData(LabelCtrl.getSchoolAcronym(labels[0].schoolId), labels.length);
     };
 
     return {
