@@ -44,6 +44,12 @@
         previewLabel: 'previewlabel',
         previewActive: 'active-label',
         previewAdded: 'added-label',
+        pageNavTitleActive: 'active-nav-title',
+        pageNavTitleAddLabel: 'nav_title_addlabel',
+        pageNavTitleLabelImport: 'nav_title_labelimport',
+        pageNavContentActive: 'active-nav-content',
+        pageNavContentAddLabel: 'nav_content_addlabel',
+        pageNavContentLabelImport: 'nav_content_labelimport',
         version: 'version'
     };
 
@@ -312,6 +318,30 @@
             });
 
             element.classList.add(DOMstrings.previewActive);
+        },
+
+        setActivePageNav: function (element) {
+
+            if (element.classList.contains(DOMstrings.pageNavTitleActive)) { return; }
+
+            [].forEach.call(document.querySelectorAll("." + DOMstrings.pageNavTitleActive + ", ." + DOMstrings.pageNavContentActive), function (el) {
+                el.classList.remove(DOMstrings.pageNavTitleActive);
+                el.classList.remove(DOMstrings.pageNavContentActive);
+            });
+
+            if (element.id === DOMstrings.pageNavTitleAddLabel) {
+
+                element.classList.add(DOMstrings.pageNavTitleActive);
+                document.getElementById(DOMstrings.pageNavContentAddLabel).classList.add(DOMstrings.pageNavContentActive);
+                return;
+            }
+
+            if (element.id === DOMstrings.pageNavTitleLabelImport) {
+
+                element.classList.add(DOMstrings.pageNavTitleActive);
+                document.getElementById(DOMstrings.pageNavContentLabelImport).classList.add(DOMstrings.pageNavContentActive);
+                return;
+            }
         },
 
         resizeText: function () {

@@ -55,6 +55,29 @@ textarea {
     color: #6d665b;
 }
 
+/* Add Label & Import CSV */
+
+.page-nav-title {
+    margin: 0 0 20px 0;
+    padding: 10px 0;
+    border-bottom: 3px solid #eee;
+    text-align: center;
+    cursor: pointer;
+}
+
+.active-nav-title {
+    border-bottom: 3px solid #9c937f;
+    cursor: auto;
+}
+
+.page-nav-content {
+    display: none;
+}
+
+.active-nav-content {
+    display: block;
+}
+
 /* Label Preview CSS */
 .label-page {
     margin: 5px;

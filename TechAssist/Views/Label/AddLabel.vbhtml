@@ -1,8 +1,6 @@
 ﻿@ModelType TechAssist.Models.LabelSchoolViewModel
 
 <div class="form-horizontal">
-        <h4>Add Label to List</h4>
-        <hr />
         @Html.ValidationSummary(True, "", New With {.class = "text-danger"})
         <div class="form-group" id="schoolId_inputrow">
             @Html.LabelFor(Function(model) model.LabelModel.SchoolID, htmlAttributes:=New With {.class = "control-label col-md-3"})

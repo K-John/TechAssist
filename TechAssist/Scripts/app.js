@@ -249,6 +249,10 @@
         document.querySelector("#" + DOM.listClear).addEventListener('click', clearDB);
         // See More button in LabelList
         document.querySelector("#" + DOM.expandList).addEventListener('click', expandList);
+        // Page Navigation button AddLabel
+        document.querySelector("#" + DOM.pageNavTitleAddLabel).addEventListener('click', function (event) { UICtrl.setActivePageNav(event.target); });
+        // Page Navigation button LabelImport
+        document.querySelector("#" + DOM.pageNavTitleLabelImport).addEventListener('click', function (event) { UICtrl.setActivePageNav(event.target); });
         // Update Label preview with active label
         document.querySelector("#" + DOM.inputLabelSpot).addEventListener('input', function (event) { UICtrl.setActivePreview(event.target.value); });
         // Change school in AddLabel
