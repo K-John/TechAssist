@@ -214,6 +214,7 @@
     </None>
     <None Include="packages.config" />
     <Content Include="Scripts\app-dbcontroller.js" />
+    <Content Include="Scripts\app-importcontroller.js" />
     <Content Include="Scripts\app-labelcontroller.js" />
     <Content Include="Scripts\app-labelsheet.js" />
     <Content Include="Scripts\app-testdatagenerator.js" />

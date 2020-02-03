@@ -1,4 +1,4 @@
-﻿var controller = (function (LabelCtrl, DBCtrl, UICtrl) {
+﻿var controller = (function (LabelCtrl, DBCtrl, UICtrl, ImportCtrl) {
 
     var version = "1.1.2";
 
@@ -163,7 +163,7 @@
             errArray.push("<br>- <strong>School</strong> is not a valid selection.");
         }
 
-        // If Error Array is not empty, display the errors and do not proceed with label creation
+        // If Error Array is not empty, display the errors and do not proceed with label edit
         if (errArray != undefined && errArray.length > 0) {
 
             errArray.forEach(function (item) {
@@ -191,7 +191,6 @@
                 content = "<strong>Error.</strong> There was an error removing the label. Please refresh the page and try again.<br><br><strong>Details: </strong>" + err;
                 UICtrl.addAlert(content, false, false);
             } else {
-                // Handle expanding list to see if we need to load labels once reached under view limit after deleting
                 LabelCtrl.removeLabel(labelSpot);
                 UICtrl.removeLabel(label);
                 UICtrl.updateLabelPreview(labelSpot, false);
@@ -245,6 +244,8 @@
         var DOM = UICtrl.getDOMstrings();
         // Submit in AddLabel
         document.querySelector("#" + DOM.inputSubmit).addEventListener('click', addLabel);
+        // Start Import in LabelImport
+        document.querySelector("#" + DOM.importSubmit).addEventListener('click', ImportCtrl.importLabel);
         // Clear button in LabelList
         document.querySelector("#" + DOM.listClear).addEventListener('click', clearDB);
         // See More button in LabelList
@@ -294,7 +295,6 @@
             }
             // Edit button on label in LabelList
             if (event.target.parentNode.parentNode.id == DOM.listRow && DOM.editLabel != undefined && event.target.id == DOM.editLabel) {
-                console.log("Editing label!");
                 startEditLabel(event.target.parentNode.parentNode);
                 return;
             }
@@ -330,6 +330,6 @@
             });
         }
     };
-})(LabelController, DBController, UIController);
+})(LabelController, DBController, UIController, ImportController);
 
 controller.init();

@@ -9,6 +9,7 @@ Public Module BundleConfig
                     "~/Scripts/app-labelcontroller.js",
                     "~/Scripts/app-dbcontroller.js",
                     "~/Scripts/app-uicontroller.js",
+                    "~/Scripts/app-importcontroller.js",
                     "~/Scripts/app.js"))
 
         bundles.Add(New ScriptBundle("~/bundles/labelsheet").Include(

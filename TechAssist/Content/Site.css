@@ -78,6 +78,27 @@ textarea {
     display: block;
 }
 
+details {
+    background-color: #fdfdfd;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.075);
+}
+
+summary {
+    cursor: pointer;
+    font-weight: bold;
+}
+
+summary:focus {
+    outline: none;
+}
+
+details > ul {
+    margin: 10px 0 0;
+}
+
 /* Label Preview CSS */
 .label-page {
     margin: 5px;

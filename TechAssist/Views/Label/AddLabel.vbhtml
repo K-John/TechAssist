@@ -5,7 +5,7 @@
         <div class="form-group" id="schoolId_inputrow">
             @Html.LabelFor(Function(model) model.LabelModel.SchoolID, htmlAttributes:=New With {.class = "control-label col-md-3"})
             <div class="col-md-9">
-                @Html.DropDownList("SchoolId", New SelectList(Model.SchoolModel, "SchoolId", "SchoolName", Model.SchoolModel), New With {.class = "form-control"})
+                @Html.DropDownList("SchoolId", New SelectList(Model.SchoolModel, "SchoolId", "SchoolName", Model.SchoolModel), New With {.class = "form-control", .id = "LabelModel_SchoolId"})
             </div>
         </div>
 

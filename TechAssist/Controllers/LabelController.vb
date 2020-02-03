@@ -41,7 +41,10 @@ Namespace Controllers
 
         ' GET: PartialView LabelImport
         Function LabelImport() As ActionResult
-            Return PartialView()
+
+            Dim LSVM As New LabelSchoolViewModel()
+            LSVM.SchoolModel = GetSchools()
+            Return PartialView(LSVM)
         End Function
 
         ' GET: JSON School List

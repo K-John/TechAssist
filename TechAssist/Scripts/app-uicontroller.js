@@ -6,7 +6,7 @@
     var expandListStatus = false;
 
     var DOMstrings = {
-        inputSchoolId: 'SchoolId',
+        inputSchoolId: 'LabelModel_SchoolId',
         inputFirstName: 'LabelModel_FirstName',
         inputLastName: 'LabelModel_LastName',
         inputBarcode: 'LabelModel_Barcode',
@@ -14,6 +14,9 @@
         inputSubmit: 'submit',
         inputDuplicate: 'duplicate',
         inputRow: '_inputrow',
+        importSchoolIdInput: 'schoolid_import',
+        importFileInput: 'file_import',
+        importSubmit: 'submit_import',
         listSchoolAcronym: 'schoolacronym',
         listFirstName: 'firstname',
         listLastName: 'lastname',
@@ -54,15 +57,11 @@
     };
 
     return {
-        /*
-         * Return list of DOM strings referencing IDs in the application
-         */
+
         getDOMstrings: function () {
             return DOMstrings;
         },
-        /*
-         * Get data from Input fields
-         */
+
         getInput: function () {
             return {
                 schoolId: document.querySelector("#" + DOMstrings.inputSchoolId).value,
@@ -79,6 +78,12 @@
                 firstName: element.querySelector("#" + DOMstrings.editFirstName).value,
                 lastName: element.querySelector("#" + DOMstrings.editLastName).value,
                 barcode: element.querySelector("#" + DOMstrings.editBarcode).value
+            }
+        },
+        getImportInput: function () {
+            return {
+                schoolId: document.querySelector("#" + DOMstrings.importSchoolIdInput).value,
+                file: document.querySelector("#" + DOMstrings.importFileInput).files[0]
             }
         },
         /*
@@ -106,27 +111,19 @@
             }
             UILabelCount++;
         },
-        /*
-         * Clear Input Fields and set Input form up for new label
-         */
+
         clearFields: function (labelSpot) {
 
             var fields, fieldsArray;
 
-            // Create queryselector with list of fields that need to be reset (first name, last name, barcode)
             fields = document.querySelectorAll("#" + DOMstrings.inputFirstName + ", #" + DOMstrings.inputLastName + ", #" + DOMstrings.inputBarcode);
 
-            // Separate 
             fieldsArray = Array.prototype.slice.call(fields);
-
             fieldsArray.forEach(function (current) {
                 current.value = "";
             });
 
-            // Set labelspot to largest labelSpot + 1
             document.querySelector("#" + DOMstrings.inputLabelSpot).value = parseInt(labelSpot) + 1;
-
-            //Set focus to first name
             fieldsArray[0].focus();
         },
 
@@ -135,7 +132,6 @@
             //Remove End Label from UI
             if (UILabelCount > (expandListCount * expandListThreshhold)) {
 
-                //TODO: Change it to one line of code to remove? No need to instantiate a new variable for this?
                 var lastLabel = document.getElementById(DOMstrings.listContainer).parentElement.lastElementChild;
                 lastLabel.remove();
                 UILabelCount--;
@@ -246,7 +242,6 @@
             expandListCount++;
         },
 
-        // Get the input's title from the supplied element ID
         addAlertError: function (field) {
             document.getElementById(field + DOMstrings.inputRow).classList.add('has-error');
 
