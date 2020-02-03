@@ -1,6 +1,6 @@
 ﻿var controller = (function (LabelCtrl, DBCtrl, UICtrl, ImportCtrl) {
 
-    var version = "1.1.2";
+    var version = "1.2.0";
 
     var getAPIInfo = function (callback) {
 
@@ -32,7 +32,7 @@
                     UICtrl.handleExpandingList(LabelCtrl.getLabelCount());
                     UICtrl.setLabelCount(LabelCtrl.getLabelCount());
                     UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
-                    UICtrl.setActivePreview(parseInt(LabelCtrl.getBiggestLabelId()) + 1);
+                    UICtrl.setActivePreview(LabelCtrl.getBiggestLabelId() + 1);
                 });
             }
         });
@@ -67,7 +67,7 @@
                     addLabel(false, true);
                 } else {
                     UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
-                    UICtrl.setActivePreview(parseInt(LabelCtrl.getBiggestLabelId()) + 1);
+                    UICtrl.setActivePreview(LabelCtrl.getBiggestLabelId() + 1);
                 }
             }
         });
@@ -96,7 +96,7 @@
             errArray.push("<br>- <strong>" + UICtrl.addAlertError("schoolId") + "</strong> is not a valid selection.");
         }
 
-        if (LabelCtrl.labelExists(input.labelSpot)) {
+        if (!(/^\d+$/.test(input.labelSpot)) || LabelCtrl.labelExists(input.labelSpot)) {
 
             errArray.push("<br>- <strong>" + UICtrl.addAlertError("labelSpot") + "</strong> #<strong>" + input.labelSpot + " </strong>already exists.");
         }
@@ -215,7 +215,7 @@
                 UICtrl.handleExpandingList(LabelCtrl.getLabelCount());
                 UICtrl.setLabelCount(LabelCtrl.getLabelCount());
                 UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
-                UICtrl.setActivePreview(parseInt(LabelCtrl.getBiggestLabelId()) + 1);
+                UICtrl.setActivePreview(LabelCtrl.getBiggestLabelId() + 1);
 
                 content = "<strong>Success!</strong> The database list has been cleared.";
                 UICtrl.addAlert(content, true, false);

@@ -1,6 +1,6 @@
 ﻿var ImportController = (function (LabelCtrl, DBCtrl, UICtrl) {
 
-    var labels, status;
+    var labels;
     var loopCount = 0;
 
     var validateImport = function (input) {
@@ -32,6 +32,8 @@
 
     var readCSV = function (file, callback) {
 
+        UICtrl.setImportStatus("Reading File...");
+
         var reader = new FileReader();
         reader.readAsBinaryString(file);
 
@@ -43,6 +45,8 @@
 
     var parseCSV = function (data, schoolId) {
 
+        UICtrl.setImportStatus("Parsing Data...");
+
         var headerData = {
             firstName: ['firstname', 'first_name', 'first name', 'first'],
             lastName: ['lastname', 'last_name', 'last name', 'last'],
@@ -52,6 +56,7 @@
         var labels = [];
 
         var dataArray = data.split("\n");
+
         var headerArray = CSVtoArray(dataArray[0].toLowerCase());
 
         for (var i = 0; headerArray.length > i; i++) {
@@ -76,7 +81,12 @@
     var CSVtoArray = function (text) {
         var re_valid = /^\s*(?:'[^'\\]*(?:\\[\S\s][^'\\]*)*'|"[^"\\]*(?:\\[\S\s][^"\\]*)*"|[^,'"\s\\]*(?:\s+[^,'"\s\\]+)*)\s*(?:,\s*(?:'[^'\\]*(?:\\[\S\s][^'\\]*)*'|"[^"\\]*(?:\\[\S\s][^"\\]*)*"|[^,'"\s\\]*(?:\s+[^,'"\s\\]+)*)\s*)*$/;
         var re_value = /(?!\s*$)\s*(?:'([^'\\]*(?:\\[\S\s][^'\\]*)*)'|"([^"\\]*(?:\\[\S\s][^"\\]*)*)"|([^,'"\s\\]*(?:\s+[^,'"\s\\]+)*))\s*(?:,|$)/g;
-        if (!re_valid.test(text)) return null;
+        if (!re_valid.test(text)) {
+            content = "<strong>Error.</strong> There was an error with your CSV file. Please take a look at your file and try again.";
+            UICtrl.addAlert(content, false, false);
+            return null;
+        }
+        UICtrl.clearAlerts();
         var a = [];
         text.replace(re_value,
             function (m0, m1, m2, m3) {
@@ -91,11 +101,14 @@
 
     var addLabels = function () {
 
+        UICtrl.setImportStatus("Adding Labels...");
+
         DBCtrl.addToDB(labels[loopCount], labels[loopCount].labelSpot, function (result, err) {
             if (!result) {
                 console.log(err);
             } else {
-                console.log(labels[loopCount]);
+                var percentComplete = ((loopCount / (labels.length - 1)) * 100).toFixed(0);
+                UICtrl.setImportProgress(percentComplete);
                 LabelCtrl.addItem(labels[loopCount]);
                 UICtrl.addListItem(labels[loopCount], LabelCtrl.getSchoolAcronym(labels[loopCount].schoolId), 0);
                 UICtrl.updateLabelPreview(labels[loopCount].labelSpot, true);
@@ -106,8 +119,9 @@
                     loopCount++;
                     addLabels();
                 } else {
-                    // TODO: Set status to DONE
-                    console.log("Done");
+                    UICtrl.setImportStatus("Done.");
+                    content = "<strong>Success!</strong> Label import has completed.";
+                    UICtrl.addAlert(content, true, false);
                     UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
                     UICtrl.setActivePreview(parseInt(LabelCtrl.getBiggestLabelId()) + 1);
                 }

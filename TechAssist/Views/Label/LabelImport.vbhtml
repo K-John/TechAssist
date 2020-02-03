@@ -10,6 +10,7 @@
                         1. Must be a CSV File
                         <ul>
                             <li>Cannot be in excel spreadsheet format</li>
+                            <li>If you're having issues, paste the data into notepad and save it from there.</li>
                         </ul>
                     </li>
                     <li>2. Must have headers set
@@ -38,9 +39,11 @@
 
     <div class="form-group" id="status_importrow">
         <label class="control-label col-md-3">Status</label>
-        <div class="col-md-9">
-            <span>Waiting</span>
-        </div>
+        <div class="col-md-9" style="line-height: 35px;">
+            <span id="progress_status_import">Waiting...</span>
+            <div class="progress" style="display: none;">
+                <div class="progress-bar" style="width: 0%" id="progress_percent_import">0%</div>
+            </div></div>
     </div>
 
     <div class="form-group">

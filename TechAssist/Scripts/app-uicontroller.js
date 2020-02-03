@@ -17,6 +17,8 @@
         importSchoolIdInput: 'schoolid_import',
         importFileInput: 'file_import',
         importSubmit: 'submit_import',
+        importProgressStatus: 'progress_status_import',
+        importProgressBar: 'progress_percent_import',
         listSchoolAcronym: 'schoolacronym',
         listFirstName: 'firstname',
         listLastName: 'lastname',
@@ -175,6 +177,13 @@
             }
 
             document.getElementById(DOMstrings.alertContainer).insertAdjacentHTML('afterbegin', newHtml);
+        },
+
+        clearAlerts: function () {
+            var container = document.getElementById(DOMstrings.alertContainer);
+            while (container.childNodes.length > 0) {
+                container.lastChild.remove();
+            }
         },
 
         startEditLabel: function (obj, element, schools) {
@@ -361,6 +370,19 @@
             }
 
             element.parentNode.parentNode.style.display = "block";
+        },
+
+        setImportStatus: function (text) {
+            document.getElementById(DOMstrings.importProgressStatus).textContent = text;
+        },
+
+        setImportProgress: function (percent) {
+            var percentString = percent + "%";
+            var progressBar = document.getElementById(DOMstrings.importProgressBar);
+
+            progressBar.parentNode.style.display = "block";
+            progressBar.style.width = percentString;
+            progressBar.textContent = percentString;
         },
 
         setVersion: function (version) {
