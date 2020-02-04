@@ -114,21 +114,6 @@
             UILabelCount++;
         },
 
-        clearFields: function (labelSpot) {
-
-            var fields, fieldsArray;
-
-            fields = document.querySelectorAll("#" + DOMstrings.inputFirstName + ", #" + DOMstrings.inputLastName + ", #" + DOMstrings.inputBarcode);
-
-            fieldsArray = Array.prototype.slice.call(fields);
-            fieldsArray.forEach(function (current) {
-                current.value = "";
-            });
-
-            document.querySelector("#" + DOMstrings.inputLabelSpot).value = parseInt(labelSpot) + 1;
-            fieldsArray[0].focus();
-        },
-
         handleExpandingList: function (labelCount) {
 
             //Remove End Label from UI
@@ -154,36 +139,8 @@
             }
         },
 
-        /*
-         * @param boolean status    - if alert is an success/error for styling
-         * @param boolean type      - if alert is permanent or temporary to be overwritten
-         */ 
-        addAlert: function (content, status, permanent) {
-
-            var html, newHtml;
-            var icon = (status) ? "glyphicon glyphicon-thumbs-up" : "glyphicon glyphicon-thumbs-down";
-            var divClass = (status) ? "alert-success" : "alert-danger";
-            var divId = (permanent) ? DOMstrings.permanentAlert : DOMstrings.temporaryAlert;
-
-            html = '<div class="alert %divClass% alert-dismissible" id="%divId%"><button type="button" class="close" id="closealert"><span aria-hidden="true">&times;</span></button><span class="%icon% alert-icon"></span> %content%</div>';
-            newHtml = html.replace(/%content%/g, content);
-            newHtml = newHtml.replace(/%icon%/g, icon);
-            newHtml = newHtml.replace(/%divClass%/g, divClass);
-            newHtml = newHtml.replace(/%divId%/g, divId);
-
-            if (!permanent && document.getElementById(divId)) {
-
-                document.getElementById(divId).remove();
-            }
-
-            document.getElementById(DOMstrings.alertContainer).insertAdjacentHTML('afterbegin', newHtml);
-        },
-
-        clearAlerts: function () {
-            var container = document.getElementById(DOMstrings.alertContainer);
-            while (container.childNodes.length > 0) {
-                container.lastChild.remove();
-            }
+        addExpandingListCount: function () {
+            expandListCount++;
         },
 
         startEditLabel: function (obj, element, schools) {
@@ -192,7 +149,7 @@
 
             schools.forEach(function (school) {
                 schoolAcronym = (school.schoolAcronym != null) ? school.schoolAcronym : '';
-                schoolOptions = (school.schoolId == obj.schoolId) ? schoolOptions.concat('<option value="' + school.schoolId + '" selected>' + schoolAcronym + '</option>') : schoolOptions = schoolOptions.concat('<option value="' + school.schoolId + '">' + schoolAcronym + '</option>') ;
+                schoolOptions = (school.schoolId == obj.schoolId) ? schoolOptions.concat('<option value="' + school.schoolId + '" selected>' + schoolAcronym + '</option>') : schoolOptions = schoolOptions.concat('<option value="' + school.schoolId + '">' + schoolAcronym + '</option>');
             });
 
             var fieldData = [
@@ -231,35 +188,9 @@
             });
         },
 
-        closeAlert: function (element) {
-            element.parentNode.parentNode.remove();
-        },
-
-        setLabelCount: function (count) {
-            document.getElementById(DOMstrings.labelCount).textContent = count;
-        },
-
-        getUILabelCount: function () {
-            return UILabelCount;
-        },
-
-        getExpandListThreshhold: function () {
-            return expandListThreshhold;
-        },
-
-        addExpandingListCount: function () {
-            expandListCount++;
-        },
-
-        addAlertError: function (field) {
-            document.getElementById(field + DOMstrings.inputRow).classList.add('has-error');
-
-            return document.getElementById(field + DOMstrings.inputRow).childNodes[1].textContent;
-        },
-
-        capFirstLetter: function (string) {
-
-            return string.replace(/^\w/, c => c.toUpperCase());
+        removeLabel: function (label) {
+            label.remove();
+            UILabelCount--;
         },
 
         clearList: function () {
@@ -274,35 +205,45 @@
             });
         },
 
-        removeLabel: function (label) {
-            label.remove();
-            UILabelCount--;
-        },
+        /*
+         * @param boolean status    - if alert is an success/error for styling
+         * @param boolean type      - if alert is permanent or temporary to be overwritten
+         */
+        addAlert: function (content, status, permanent) {
 
-        updateLabelPreview: function (labelSpot, status) {
+            var html, newHtml;
+            var icon = (status) ? "glyphicon glyphicon-thumbs-up" : "glyphicon glyphicon-thumbs-down";
+            var divClass = (status) ? "alert-success" : "alert-danger";
+            var divId = (permanent) ? DOMstrings.permanentAlert : DOMstrings.temporaryAlert;
 
-            if (parseInt(labelSpot) > 30) { return; }
+            html = '<div class="alert %divClass% alert-dismissible" id="%divId%"><button type="button" class="close" id="closealert"><span aria-hidden="true">&times;</span></button><span class="%icon% alert-icon"></span> %content%</div>';
+            newHtml = html.replace(/%content%/g, content);
+            newHtml = newHtml.replace(/%icon%/g, icon);
+            newHtml = newHtml.replace(/%divClass%/g, divClass);
+            newHtml = newHtml.replace(/%divId%/g, divId);
 
-            var label = document.getElementById(DOMstrings.previewContainer).childNodes[parseInt(labelSpot) * 2 - 1].childNodes[1];
+            if (!permanent && document.getElementById(divId)) {
 
-            if (status) {
-                label.classList.add(DOMstrings.previewAdded);
-            } else {
-                label.classList.remove(DOMstrings.previewAdded);
+                document.getElementById(divId).remove();
             }
+
+            document.getElementById(DOMstrings.alertContainer).insertAdjacentHTML('afterbegin', newHtml);
         },
 
-        setActivePreview: function (labelSpot) {
+        addAlertError: function (field) {
+            document.getElementById(field + DOMstrings.inputRow).classList.add('has-error');
 
-            var container = document.getElementById(DOMstrings.previewContainer);
-            var labels = document.querySelectorAll("." + DOMstrings.previewActive);
+            return document.getElementById(field + DOMstrings.inputRow).childNodes[1].textContent;
+        },
 
-            [].forEach.call(labels, function (el) {
-                el.classList.remove(DOMstrings.previewActive);
-            });
+        closeAlert: function (element) {
+            element.parentNode.parentNode.remove();
+        },
 
-            if (labelSpot != undefined && parseInt(labelSpot) <= 30) {
-                container.childNodes[parseInt(labelSpot) * 2 - 1].childNodes[1].classList.add(DOMstrings.previewActive);
+        clearAlerts: function () {
+            var container = document.getElementById(DOMstrings.alertContainer);
+            while (container.childNodes.length > 0) {
+                container.lastChild.remove();
             }
         },
 
@@ -322,6 +263,61 @@
             });
 
             element.classList.add(DOMstrings.previewActive);
+        },
+
+        setActivePreview: function (labelSpot) {
+
+            var container = document.getElementById(DOMstrings.previewContainer);
+            var labels = document.querySelectorAll("." + DOMstrings.previewActive);
+
+            [].forEach.call(labels, function (el) {
+                el.classList.remove(DOMstrings.previewActive);
+            });
+
+            if (labelSpot != undefined && parseInt(labelSpot) <= 30) {
+                container.childNodes[parseInt(labelSpot) * 2 - 1].childNodes[1].classList.add(DOMstrings.previewActive);
+            }
+        },
+
+        updateLabelPreview: function (labelSpot, status) {
+
+            if (parseInt(labelSpot) > 30) { return; }
+
+            var label = document.getElementById(DOMstrings.previewContainer).childNodes[parseInt(labelSpot) * 2 - 1].childNodes[1];
+
+            if (status) {
+                label.classList.add(DOMstrings.previewAdded);
+            } else {
+                label.classList.remove(DOMstrings.previewAdded);
+            }
+        },
+
+        clearFields: function (labelSpot) {
+
+            var fields, fieldsArray;
+
+            fields = document.querySelectorAll("#" + DOMstrings.inputFirstName + ", #" + DOMstrings.inputLastName + ", #" + DOMstrings.inputBarcode);
+
+            fieldsArray = Array.prototype.slice.call(fields);
+            fieldsArray.forEach(function (current) {
+                current.value = "";
+            });
+
+            document.querySelector("#" + DOMstrings.inputLabelSpot).value = parseInt(labelSpot) + 1;
+            fieldsArray[0].focus();
+        },
+
+        toggleInputVisibility: function (schoolAcronym) {
+
+            var element = document.getElementById(DOMstrings.inputDuplicate);
+
+            if (schoolAcronym == null || (!schoolAcronym.includes("MS") && !schoolAcronym.includes("HS"))) {
+                element.checked = false;
+                element.parentNode.parentNode.style.display = "none";
+                return;
+            }
+
+            element.parentNode.parentNode.style.display = "block";
         },
 
         setActivePageNav: function (element) {
@@ -348,30 +344,6 @@
             }
         },
 
-        resizeText: function () {
-
-            var text = document.querySelectorAll("#resize");
-
-            [].forEach.call(text, function (el) {
-                if (el.scrollWidth > el.clientWidth) {
-                    el.style.fontSize = "smaller";
-                }
-            });
-        },
-
-        toggleInputVisibility: function (schoolAcronym) {
-
-            var element = document.getElementById(DOMstrings.inputDuplicate);
-
-            if (schoolAcronym == null || (!schoolAcronym.includes("MS") && !schoolAcronym.includes("HS"))) {
-                element.checked = false;
-                element.parentNode.parentNode.style.display = "none";
-                return;
-            }
-
-            element.parentNode.parentNode.style.display = "block";
-        },
-
         setImportStatus: function (text) {
             document.getElementById(DOMstrings.importProgressStatus).textContent = text;
         },
@@ -383,6 +355,34 @@
             progressBar.parentNode.style.display = "block";
             progressBar.style.width = percentString;
             progressBar.textContent = percentString;
+        },
+
+        resizeText: function () {
+
+            var text = document.querySelectorAll("#resize");
+
+            [].forEach.call(text, function (el) {
+                if (el.scrollWidth > el.clientWidth) {
+                    el.style.fontSize = "smaller";
+                }
+            });
+        },
+
+        getExpandListThreshhold: function () {
+            return expandListThreshhold;
+        },
+
+        getUILabelCount: function () {
+            return UILabelCount;
+        },
+
+        capFirstLetter: function (string) {
+
+            return string.replace(/^\w/, c => c.toUpperCase());
+        },
+
+        setLabelCount: function (count) {
+            document.getElementById(DOMstrings.labelCount).textContent = count;
         },
 
         setVersion: function (version) {

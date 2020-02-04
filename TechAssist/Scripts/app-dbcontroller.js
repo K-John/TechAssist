@@ -88,22 +88,6 @@
             request.onerror = function () {
                 callback(false, request.error);
             };
-        },
-
-        testGetData: function () {
-
-            var transaction = db.transaction(objectStoreName, "readwrite");
-            var labelStore = transaction.objectStore(objectStoreName);
-            var labels = labelStore.getAll();
-
-            labels.onsuccess = function () {
-                console.log(labels.result);
-            };
-
-            labels.onerror = function () {
-                console.log("Error", labels.error);
-            };
         }
-
     };
 })();

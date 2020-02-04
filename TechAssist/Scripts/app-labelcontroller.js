@@ -8,12 +8,11 @@
         this.labelSpot = labelSpot;
     };
 
-    var School = function (schoolId, schoolName, schoolAcronym, schoolPhone, schoolPictureUrl) {
+    var School = function (schoolId, schoolName, schoolAcronym, schoolPhone) {
         this.schoolId = schoolId;
         this.schoolName = schoolName;
         this.schoolAcronym = schoolAcronym;
         this.schoolPhone = schoolPhone;
-        this.schoolPictureUrl = schoolPictureUrl;
     };
 
     var data = {
@@ -28,14 +27,32 @@
             return new Label(schoolId, firstName, lastName, barcode, labelSpot);
         },
 
-        addItem: function (newItem) {
+        addLabel: function (newItem) {
 
             data.labels.push(newItem);
         },
 
-        updateItem: function (item) {
+        updateLabel: function (item) {
 
             data.labels[data.labels.findIndex(label => label.labelSpot == item.labelSpot)] = item;
+        },
+
+        removeLabel: function (labelId) {
+            data.labels.splice(data.labels.findIndex(label => label.labelSpot == labelId), 1);
+        },
+
+        clearLabelData: function () {
+            data.labels = [];
+        },
+
+        labelExists: function (labelSpot) {
+
+            for (label of data.labels) {
+                if (label.labelSpot == labelSpot) {
+                    return true;
+                }
+            }
+            return false;
         },
 
         getBiggestLabelId: function () {
@@ -50,6 +67,18 @@
                 }
             }
             return parseInt(largest);
+        },
+
+        getLabelCount: function () {
+            return data.labels.length;
+        },
+
+        getLabelByIndex: function (index) {
+            return data.labels[index];
+        },
+
+        getLabelBySpot: function (labelSpot) {
+            return data.labels[data.labels.findIndex(label => label.labelSpot == labelSpot)];
         },
 
         insertionSort: function (arr) {
@@ -76,84 +105,38 @@
             return arr;
         },
 
-        testGetData: function () {
-            return data;
-        },
-
         addSchools: function (schools) {
 
             for (school of schools) {
 
-                var newItem = new School(school["SchoolID"], school["SchoolName"], school["SchoolAcronym"], school["SchoolPhone"], school["SchoolPictureUrl"]);
+                var newItem = new School(school["SchoolID"], school["SchoolName"], school["SchoolAcronym"], school["SchoolPhone"]);
 
                 data.schools.push(newItem);
             }
         },
 
-        // TODO: Convert to array index instead of raw loop?
-        getSchoolAcronym: function (schoolId) {
+        schoolExists: function (schoolId) {
 
-            for (var i = 0; i < data.schools.length; i++) {
-
-                if (data.schools[i].schoolId == schoolId) {
-
-                    return data.schools[i].schoolAcronym;
+            for (school of data.schools) {
+                if (school.schoolId == schoolId) {
+                    return true;
                 }
             }
-        },
-
-        // TODO: Convert to array index instead of raw loop?
-        getSchoolPhone: function (schoolId) {
-
-            for (var i = 0; i < data.schools.length; i++) {
-                if (data.schools[i].schoolId == schoolId) {
-                    return data.schools[i].schoolPhone;
-                }
-            }
+            return false;
         },
 
         getSchools: function () {
             return data.schools;
         },
 
-        getLabelCount: function () {
-            return data.labels.length;
+        getSchoolAcronym: function (schoolId) {
+
+            return data.schools[data.schools.findIndex(school => school.schoolId == schoolId)].schoolAcronym;
         },
 
-        getLabelByIndex: function (i) {
-            return data.labels[i];
-        },
+        getSchoolPhone: function (schoolId) {
 
-        getLabelBySpot: function (i) {
-            return data.labels[data.labels.findIndex(label => label.labelSpot == i)];
-        },
-
-        labelExists: function (i) {
-
-            for (label of data.labels) {
-                if (label.labelSpot == i) {
-                    return true;
-                }
-            }
-            return false;
-        },
-
-        schoolExists: function (i) {
-
-            for (school of data.schools) {
-                if (school.schoolId == i) {
-                    return true;
-                }
-            }
-            return false;
-        },
-
-        clearLabelData: function () {
-            data.labels = [];
-        },
-
-        removeLabel: function (labelId) {
-            data.labels.splice(data.labels.findIndex(label => label.labelSpot == labelId), 1);
+            return data.schools[data.schools.findIndex(school => school.schoolId == schoolId)].schoolPhone;
         }
     };
 })();

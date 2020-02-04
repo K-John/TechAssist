@@ -109,7 +109,7 @@
             } else {
                 var percentComplete = ((loopCount / (labels.length - 1)) * 100).toFixed(0);
                 UICtrl.setImportProgress(percentComplete);
-                LabelCtrl.addItem(labels[loopCount]);
+                LabelCtrl.addLabel(labels[loopCount]);
                 UICtrl.addListItem(labels[loopCount], LabelCtrl.getSchoolAcronym(labels[loopCount].schoolId), 0);
                 UICtrl.updateLabelPreview(labels[loopCount].labelSpot, true);
                 UICtrl.handleExpandingList(LabelCtrl.getLabelCount());

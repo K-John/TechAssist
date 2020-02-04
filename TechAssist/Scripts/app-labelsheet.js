@@ -22,6 +22,8 @@
 
             if (!success) {
                 alert("There was an error loading your labels. Please reload the page.");
+            } else if (result < 1) {
+                alert("There are no labels in queue. This could be caused by an empty label list or an unsupported browser. Please go back to the main website and refresh the page to ensure labels are still in the list.");
             } else {
                 var labels = LabelCtrl.insertionSort(result);
                 loadLabels(labels);
@@ -38,24 +40,19 @@
 
             if (parseInt(labels[progress].labelSpot) == i) {
 
-                html = '<div class="label"><img class="image" src="/content/img/%schoolAcronym%.jpg"><div class="student"><div id="resize">%firstName%</div><div id="resize">%lastName%</div><svg class="barcode"jsbarcode-value="%barcode%"jsbarcode-displayvalue="false"jsbarcode-width="1"jsbarcode-height="20"jsbarcode-margin="5"></svg></div><div class="school"><span>IF FOUND, CALL %schoolAcronym%: %schoolPhone%</span></div></div>';
-                newhtml = html.replace(/%schoolAcronym%/g, LabelCtrl.getSchoolAcronym(labels[progress].schoolId));
-                newhtml = newhtml.replace(/%firstName%/g, labels[progress].firstName);
-                newhtml = newhtml.replace(/%lastName%/g, labels[progress].lastName);
-                newhtml = newhtml.replace(/%barcode%/g, labels[progress].barcode);
-                newhtml = newhtml.replace(/%schoolPhone%/g, LabelCtrl.getSchoolPhone(labels[progress].schoolId));
-                document.getElementById(DOM.pageContainer).insertAdjacentHTML('beforeend', newhtml);
+                html = '<div class="label"><img class="image" src="/content/img/' + LabelCtrl.getSchoolAcronym(labels[progress].schoolId) + '.jpg"><div class="student"><div id="resize">' + labels[progress].firstName + '</div><div id="resize">' + labels[progress].lastName + '</div><svg class="barcode"jsbarcode-value="' + labels[progress].barcode + '"jsbarcode-displayvalue="false"jsbarcode-width="1"jsbarcode-height="20"jsbarcode-margin="5"></svg></div><div class="school"><span>IF FOUND, CALL ' + LabelCtrl.getSchoolAcronym(labels[progress].schoolId) + ': ' + LabelCtrl.getSchoolPhone(labels[progress].schoolId) + '</span></div></div>';
+                document.getElementById(DOM.pageContainer).insertAdjacentHTML('beforeend', html);
                 progress++;
 
-            } else {
+            } else { // There is no label for this spot, put a blank label
+
                 html = '<div class="label"></div>';
                 document.getElementById(DOM.pageContainer).insertAdjacentHTML('beforeend', html);
             }
 
-            if (i % 30 == 0) {
+            if (i % 30 == 0) { // End current page and start a new one
 
                 html = '</div><div class="page" id="pagecontainer">';
-                // End current page and start a new one
                 var oldContainer = document.getElementById(DOM.pageContainer);
                 oldContainer.removeAttribute("id");
                 oldContainer.insertAdjacentHTML('afterend', html);

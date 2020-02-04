@@ -18,11 +18,6 @@
                 </button>
                 @Html.ActionLink("Home", "Index", "Label", New With {.area = ""}, New With {.class = "navbar-brand"})
             </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Test Data", "GenerateTestData", "Label")</li>
-                </ul>
-            </div>
         </div>
     </div>
     <div class="container body-content">

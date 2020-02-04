@@ -1,6 +1,6 @@
 ﻿var controller = (function (LabelCtrl, DBCtrl, UICtrl, ImportCtrl) {
 
-    var version = "1.2.0";
+    var version = "1.2.1";
 
     var getAPIInfo = function (callback) {
 
@@ -26,7 +26,7 @@
             } else {
                 var sortedResult = LabelCtrl.insertionSort(result);
                 sortedResult.forEach(function (newItem) {
-                    LabelCtrl.addItem(newItem);
+                    LabelCtrl.addLabel(newItem);
                     UICtrl.addListItem(newItem, LabelCtrl.getSchoolAcronym(newItem.schoolId), 0);
                     UICtrl.updateLabelPreview(newItem.labelSpot, true);
                     UICtrl.handleExpandingList(LabelCtrl.getLabelCount());
@@ -57,7 +57,7 @@
                 content = "<strong>Success!</strong> <i>" + newItem.firstName + " " + newItem.lastName + "</i> from <i>" + LabelCtrl.getSchoolAcronym(newItem.schoolId) + "</i> has been added.";
                 UICtrl.addAlert(content, true, false);
 
-                LabelCtrl.addItem(newItem);
+                LabelCtrl.addLabel(newItem);
                 UICtrl.addListItem(newItem, LabelCtrl.getSchoolAcronym(newItem.schoolId), 0);
                 UICtrl.updateLabelPreview(newItem.labelSpot, true);
                 UICtrl.handleExpandingList(LabelCtrl.getLabelCount());
@@ -137,7 +137,7 @@
             } else {
                 content = "<strong>Success!</strong> <i>" + updatedItem.firstName + " " + updatedItem.lastName + "</i> from <i>" + LabelCtrl.getSchoolAcronym(updatedItem.schoolId) + "</i> has been updated.";
                 UICtrl.addAlert(content, true, false);
-                LabelCtrl.updateItem(updatedItem);
+                LabelCtrl.updateLabel(updatedItem);
                 UICtrl.updateLabel(updatedItem, labelElement, LabelCtrl.getSchoolAcronym(updatedItem.schoolId));
             }
         });
