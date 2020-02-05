@@ -395,10 +395,6 @@
 
         setVersion: function (version) {
             document.getElementById(DOMstrings.version).textContent = " - v. " + version;
-        },
-
-        testGetData: function (string, mapObj) {
-            replaceAll(string, mapObj);
         }
     };
 })();
