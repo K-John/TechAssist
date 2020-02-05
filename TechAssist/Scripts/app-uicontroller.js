@@ -58,6 +58,13 @@
         version: 'version'
     };
 
+    var replaceAll = function (str, mapObj) {
+        var re = new RegExp(Object.keys(mapObj).join("|"), "gi");
+        return str.replace(re, function (matched) {
+            return mapObj[matched];
+        });
+    };
+
     return {
 
         getDOMstrings: function () {
@@ -94,22 +101,22 @@
          */
         addListItem: function (obj, schoolAcronym, position) {
 
-            var html, newHtml;
-
             var container = "#" + DOMstrings.listContainer;
 
-            html = '<tr class="table-row" id="labelrow"><td id="schoolacronym">%schoolAcronym%</td><td id="firstname">%firstName%</td><td id="lastname">%lastName%</td><td id="barcode">%barcode%</td><td id="labelspot" style="text-align: center;">%labelSpot%</td><td style="text-align: center;" id="labeldetails"><span class="glyphicon glyphicon-pencil icon-hover" data-toggle="tooltip" data-placement="top" title="Edit Label" id= "editlabel" aria-hidden="true"></span><span class="glyphicon glyphicon-trash icon-hover hover-view" data-toggle="tooltip" data-placement="top" title="Remove Label" id="removelabel" aria-hidden="true"></span></td></tr>';
-            newHtml = html.replace(/%schoolId%/g, obj.schoolId);
-            newHtml = newHtml.replace(/%schoolAcronym%/g, schoolAcronym)
-            newHtml = newHtml.replace(/%firstName%/g, obj.firstName);
-            newHtml = newHtml.replace(/%lastName%/g, obj.lastName);
-            newHtml = newHtml.replace(/%barcode%/g, obj.barcode);
-            newHtml = newHtml.replace(/%labelSpot%/g, obj.labelSpot);
+            var htmlString = '<tr class="table-row" id="labelrow"><td id="schoolacronym">%schoolacronym%</td><td id="firstname">%firstName%</td><td id="lastname">%lastName%</td><td id="barcode">%barcode%</td><td id="labelspot" style="text-align: center;">%labelSpot%</td><td style="text-align: center;" id="labeldetails"><span class="glyphicon glyphicon-pencil icon-hover" data-toggle="tooltip" data-placement="top" title="Edit Label" id= "editlabel" aria-hidden="true"></span><span class="glyphicon glyphicon-trash icon-hover hover-view" data-toggle="tooltip" data-placement="top" title="Remove Label" id="removelabel" aria-hidden="true"></span></td></tr>';
+            var mapObj = {
+                "%schoolacronym%": schoolAcronym,
+                "%firstName%": obj.firstName,
+                "%lastName%": obj.lastName,
+                "%barcode%": obj.barcode,
+                "%labelSpot%": obj.labelSpot
+            };
+            var html = replaceAll(htmlString, mapObj);
 
             if (position == 0) {
-                document.querySelector(container).insertAdjacentHTML('afterend', newHtml);
+                document.querySelector(container).insertAdjacentHTML('afterend', html);
             } else if (position == 1) {
-                document.querySelector(container).parentElement.insertAdjacentHTML('beforeend', newHtml);
+                document.querySelector(container).parentElement.insertAdjacentHTML('beforeend', html);
             }
             UILabelCount++;
         },
@@ -211,23 +218,24 @@
          */
         addAlert: function (content, status, permanent) {
 
-            var html, newHtml;
             var icon = (status) ? "glyphicon glyphicon-thumbs-up" : "glyphicon glyphicon-thumbs-down";
             var divClass = (status) ? "alert-success" : "alert-danger";
             var divId = (permanent) ? DOMstrings.permanentAlert : DOMstrings.temporaryAlert;
 
-            html = '<div class="alert %divClass% alert-dismissible" id="%divId%"><button type="button" class="close" id="closealert"><span aria-hidden="true">&times;</span></button><span class="%icon% alert-icon"></span> %content%</div>';
-            newHtml = html.replace(/%content%/g, content);
-            newHtml = newHtml.replace(/%icon%/g, icon);
-            newHtml = newHtml.replace(/%divClass%/g, divClass);
-            newHtml = newHtml.replace(/%divId%/g, divId);
+            var htmlString = '<div class="alert %divClass% alert-dismissible" id="%divId%"><button type="button" class="close" id="closealert"><span aria-hidden="true">&times;</span></button><span class="%icon% alert-icon"></span> %content%</div>';
+            var mapObj = {
+                "%content%": content,
+                "%icon%": icon,
+                "%divClass%": divClass,
+                "%divId%": divId
+            };
+            var html = replaceAll(htmlString, mapObj);
 
             if (!permanent && document.getElementById(divId)) {
-
                 document.getElementById(divId).remove();
             }
 
-            document.getElementById(DOMstrings.alertContainer).insertAdjacentHTML('afterbegin', newHtml);
+            document.getElementById(DOMstrings.alertContainer).insertAdjacentHTML('afterbegin', html);
         },
 
         addAlertError: function (field) {
@@ -387,6 +395,10 @@
 
         setVersion: function (version) {
             document.getElementById(DOMstrings.version).textContent = " - v. " + version;
+        },
+
+        testGetData: function (string, mapObj) {
+            replaceAll(string, mapObj);
         }
     };
 })();
