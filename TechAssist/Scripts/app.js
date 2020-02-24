@@ -1,42 +1,69 @@
-﻿var controller = (function (LabelCtrl, DBCtrl, UICtrl, ImportCtrl) {
+﻿var AssetTagController = (function (LabelCtrl, DBCtrl, UICtrl) {
 
-    var version = "1.2.2";
+    var addAssetTag = function () {
 
-    var getAPIInfo = function (callback) {
+        var input = UICtrl.getAssetTagInput();
 
-        var xmlhttp = new XMLHttpRequest();
-        var url = "/label/schoolsinfo";
-        xmlhttp.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                var responseArr = JSON.parse(this.responseText);
-                LabelCtrl.addSchools(responseArr);
-                callback();
-            }
-        };
-        xmlhttp.open("GET", url, true);
-        xmlhttp.send();
+        if (!validateInput(input)) { return; }
+
     };
 
-    var getDBItems = function () {
+    var validateInput = function (input) {
 
-        DBCtrl.getAllItems(function (success, result) {
+        var errArray = [];
+        var err = "<strong>Error.</strong> There are issue(s) with the input:<br>";
 
-            if (!success) {
-                UICtrl.addAlert("<strong>Error.</strong> There was an issue getting your data from the database. Please refresh the page to try again.", false, true);
-            } else {
-                var sortedResult = LabelCtrl.insertionSort(result);
-                sortedResult.forEach(function (newItem) {
-                    LabelCtrl.addLabel(newItem);
-                    UICtrl.addListItem(newItem, LabelCtrl.getSchoolAcronym(newItem.schoolId), 0);
-                    UICtrl.updateLabelPreview(newItem.labelSpot, true);
-                    UICtrl.handleExpandingList(LabelCtrl.getLabelCount());
-                    UICtrl.setLabelCount(LabelCtrl.getLabelCount());
-                    UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
-                    UICtrl.setActivePreview(LabelCtrl.getBiggestLabelId() + 1);
-                });
-            }
-        });
+        for (field in input) {
+            document.getElementById(field + "_inputrow").classList.remove('has-error'); //Remove any existing errors from previous validation
+        }
+
+        if (!(/^(?!.{10,})(?=^[CL|LA]{2})(?=.*[0-9]{7}){9}.*$/.test(input.assetTag))) {
+
+            errArray.push("<br>- <strong>" + UICtrl.addAlertError("assetTag") + "</strong> is not valid (Start with CL / LA followed by 7 numbers)");
+        }
+
+        if (!(/^\d+$/.test(input.labelSpot)) || LabelCtrl.labelExists(input.labelSpot)) {
+
+            errArray.push("<br>- <strong>" + UICtrl.addAlertError("labelSpot") + "</strong> #<strong>" + input.labelSpot + " </strong>already exists.");
+        }
+
+        // If Error Array is not empty, display the errors and do not proceed with label creation
+        if (errArray != undefined && errArray.length > 0) {
+
+            errArray.forEach(function (item) {
+                err = err.concat(item);
+            });
+            UICtrl.addAlert(err, false, false);
+            return false;
+        }
+
+        // No errors were found with the input, proceed with creating the label
+        return true;
     };
+
+    var setupEventListeners = function () {
+
+        var DOM = UICtrl.getDOMstrings();
+        // Submit in AssetTag
+        document.querySelector("#" + DOM.assetTagSubmit).addEventListener('click', addAssetTag);
+        // Page Navigation button AssetTag
+        document.querySelector("#" + DOM.pageNavTitleAssetTag).addEventListener('click', function (event) { UICtrl.setActivePageNav(event.target) });
+        // Update Label preview with active label
+        document.querySelector("#" + DOM.assetTagLabelSpot).addEventListener('input', function (event) { UICtrl.setActivePreview(event.target.value); });
+    };
+
+    return {
+        init: function () {
+
+            setupEventListeners();
+        }
+    }
+})(LabelController, DBController, UIController);
+
+
+
+
+var StudentLabelController = (function (LabelCtrl, DBCtrl, UICtrl) {
 
     var addLabel = function (event, duplicate) {
 
@@ -113,6 +140,86 @@
 
         // No errors were found with the input, proceed with creating the label
         return true;
+    };
+
+    var setupEventListeners = function () {
+
+        var DOM = UICtrl.getDOMstrings();
+
+        // Submit in AddLabel
+        document.querySelector("#" + DOM.inputSubmit).addEventListener('click', addLabel);
+        // Page Navigation button AddLabel
+        document.querySelector("#" + DOM.pageNavTitleAddLabel).addEventListener('click', function (event) { UICtrl.setActivePageNav(event.target); });
+        // Change school in AddLabel
+        document.querySelector("#" + DOM.inputSchoolId).addEventListener('change', function (event) { UICtrl.toggleInputVisibility(LabelCtrl.getSchoolAcronym(event.target.value)); });
+        // Update Label preview with active label
+        document.querySelector("#" + DOM.inputLabelSpot).addEventListener('input', function (event) { UICtrl.setActivePreview(event.target.value); });
+
+        // Pressing Enter
+        document.addEventListener('keypress', function (event) {
+            // Enter Key in AddLabel
+            if ((event.keyCode === 13 || event.which === 13) &&
+                (document.activeElement === document.getElementById(DOM.inputSchoolId)
+                    || document.activeElement === document.getElementById(DOM.inputFirstName)
+                    || document.activeElement === document.getElementById(DOM.inputLastName)
+                    || document.activeElement === document.getElementById(DOM.inputBarcode)
+                    || document.activeElement === document.getElementById(DOM.inputLabelSpot)
+                    || document.activeElement === document.getElementById(DOM.inputDuplicate))) {
+                addLabel();
+                return;
+            }
+        });
+    }
+
+    return {
+        init: function () {
+
+            setupEventListeners();
+        }
+    }
+})(LabelController, DBController, UIController);
+
+
+
+
+var controller = (function (LabelCtrl, DBCtrl, UICtrl, ImportCtrl, AssetTagCtrl, StudentLabelCtrl) {
+
+    var version = "1.3.0";
+
+    var getAPIInfo = function (callback) {
+
+        var xmlhttp = new XMLHttpRequest();
+        var url = "/label/schoolsinfo";
+        xmlhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var responseArr = JSON.parse(this.responseText);
+                LabelCtrl.addSchools(responseArr);
+                callback();
+            }
+        };
+        xmlhttp.open("GET", url, true);
+        xmlhttp.send();
+    };
+
+    var getDBItems = function () {
+
+        DBCtrl.getAllItems(function (success, result) {
+
+            if (!success) {
+                UICtrl.addAlert("<strong>Error.</strong> There was an issue getting your data from the database. Please refresh the page to try again.", false, true);
+            } else {
+                var sortedResult = LabelCtrl.insertionSort(result);
+                sortedResult.forEach(function (newItem) {
+                    LabelCtrl.addLabel(newItem);
+                    UICtrl.addListItem(newItem, LabelCtrl.getSchoolAcronym(newItem.schoolId), 0);
+                    UICtrl.updateLabelPreview(newItem.labelSpot, true);
+                    UICtrl.handleExpandingList(LabelCtrl.getLabelCount());
+                    UICtrl.setLabelCount(LabelCtrl.getLabelCount());
+                    UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
+                    UICtrl.setActivePreview(LabelCtrl.getBiggestLabelId() + 1);
+                });
+            }
+        });
     };
 
     var startEditLabel = function (labelElement) {
@@ -242,36 +349,17 @@
     var setupEventListeners = function () {
 
         var DOM = UICtrl.getDOMstrings();
-        // Submit in AddLabel
-        document.querySelector("#" + DOM.inputSubmit).addEventListener('click', addLabel);
         // Start Import in LabelImport
         document.querySelector("#" + DOM.importSubmit).addEventListener('click', ImportCtrl.importLabel);
         // Clear button in LabelList
         document.querySelector("#" + DOM.listClear).addEventListener('click', clearDB);
         // See More button in LabelList
         document.querySelector("#" + DOM.expandList).addEventListener('click', expandList);
-        // Page Navigation button AddLabel
-        document.querySelector("#" + DOM.pageNavTitleAddLabel).addEventListener('click', function (event) { UICtrl.setActivePageNav(event.target); });
         // Page Navigation button LabelImport
         document.querySelector("#" + DOM.pageNavTitleLabelImport).addEventListener('click', function (event) { UICtrl.setActivePageNav(event.target); });
-        // Update Label preview with active label
-        document.querySelector("#" + DOM.inputLabelSpot).addEventListener('input', function (event) { UICtrl.setActivePreview(event.target.value); });
-        // Change school in AddLabel
-        document.querySelector("#" + DOM.inputSchoolId).addEventListener('change', function (event) { UICtrl.toggleInputVisibility(LabelCtrl.getSchoolAcronym(event.target.value)); });
 
         // Pressing Enter
         document.addEventListener('keypress', function (event) {
-            // Enter Key in AddLabel
-            if ((event.keyCode === 13 || event.which === 13) &&
-                (document.activeElement === document.getElementById(DOM.inputSchoolId)
-                    || document.activeElement === document.getElementById(DOM.inputFirstName)
-                    || document.activeElement === document.getElementById(DOM.inputLastName)
-                    || document.activeElement === document.getElementById(DOM.inputBarcode)
-                    || document.activeElement === document.getElementById(DOM.inputLabelSpot)
-                    || document.activeElement === document.getElementById(DOM.inputDuplicate))) {
-                addLabel();
-                return;
-            }
             if ((event.keyCode === 13 || event.which === 13) &&
                 (document.activeElement === document.getElementById(DOM.editSchoolId)
                     || document.activeElement === document.getElementById(DOM.editFirstName)
@@ -320,6 +408,8 @@
         init: function () {
             UICtrl.setVersion(version);
             setupEventListeners();
+            AssetTagCtrl.init();
+            StudentLabelCtrl.init();
             DBCtrl.establishDB(function (result, err) {
                 if (!result) {
                     console.log("Error connection to DB: ", err);
@@ -330,6 +420,6 @@
             });
         }
     };
-})(LabelController, DBController, UIController, ImportController);
+})(LabelController, DBController, UIController, ImportController, AssetTagController, StudentLabelController);
 
 controller.init();

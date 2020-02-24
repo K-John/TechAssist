@@ -14,6 +14,9 @@
         inputSubmit: 'submit',
         inputDuplicate: 'duplicate',
         inputRow: '_inputrow',
+        assetTagAsset: 'asset_assettag',
+        assetTagLabelSpot: 'labelspot_assettag',
+        assetTagSubmit: 'submit_assettag',
         importSchoolIdInput: 'schoolid_import',
         importFileInput: 'file_import',
         importSubmit: 'submit_import',
@@ -52,9 +55,11 @@
         pageNavTitleActive: 'active-nav-title',
         pageNavTitleAddLabel: 'nav_title_addlabel',
         pageNavTitleLabelImport: 'nav_title_labelimport',
+        pageNavTitleAssetTag: 'nav_title_assettag',
         pageNavContentActive: 'active-nav-content',
         pageNavContentAddLabel: 'nav_content_addlabel',
         pageNavContentLabelImport: 'nav_content_labelimport',
+        pageNavContentAssetTag: 'nav_content_assettag',
         version: 'version'
     };
 
@@ -93,6 +98,12 @@
             return {
                 schoolId: document.querySelector("#" + DOMstrings.importSchoolIdInput).value,
                 file: document.querySelector("#" + DOMstrings.importFileInput).files[0]
+            }
+        },
+        getAssetTagInput: function () {
+            return {
+                assetTag: document.querySelector("#" + DOMstrings.assetTagAsset).value,
+                labelSpot: document.querySelector("#" + DOMstrings.assetTagLabelSpot).value
             }
         },
         /*
@@ -206,6 +217,8 @@
                 container.lastChild.remove();
             }
             var labels = document.querySelectorAll("." + DOMstrings.previewAdded);
+            expandListCount = 1;
+            UILabelCount = 0;
 
             [].forEach.call(labels, function (el) {
                 el.classList.remove(DOMstrings.previewAdded);
@@ -264,6 +277,7 @@
             var labelSpot = parseInt(element.textContent);
 
             document.getElementById(DOMstrings.inputLabelSpot).value = labelSpot;
+            document.getElementById(DOMstrings.assetTagLabelSpot).value = labelSpot;
             document.getElementById(DOMstrings.inputFirstName).focus();
 
             [].forEach.call(document.querySelectorAll("." + DOMstrings.previewActive), function (el) {
@@ -348,6 +362,13 @@
 
                 element.classList.add(DOMstrings.pageNavTitleActive);
                 document.getElementById(DOMstrings.pageNavContentLabelImport).classList.add(DOMstrings.pageNavContentActive);
+                return;
+            }
+
+            if (element.id === DOMstrings.pageNavTitleAssetTag) {
+
+                element.classList.add(DOMstrings.pageNavTitleActive);
+                document.getElementById(DOMstrings.pageNavContentAssetTag).classList.add(DOMstrings.pageNavContentActive);
                 return;
             }
         },

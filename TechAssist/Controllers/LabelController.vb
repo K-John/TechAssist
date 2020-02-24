@@ -47,6 +47,11 @@ Namespace Controllers
             Return PartialView(LSVM)
         End Function
 
+        ' GET: PartialView AssetTag
+        Function AssetTag() As ActionResult
+            Return PartialView()
+        End Function
+
         ' GET: JSON School List
         Function SchoolsInfo() As ActionResult
             Dim LSVM As New LabelSchoolViewModel()

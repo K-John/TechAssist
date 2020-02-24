@@ -234,6 +234,7 @@
     <Content Include="Views\Label\LabelSheet.vbhtml" />
     <Content Include="Views\Label\GenerateTestData.vbhtml" />
     <Content Include="Views\Label\LabelImport.vbhtml" />
+    <Content Include="Views\Label\AssetTag.vbhtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />
