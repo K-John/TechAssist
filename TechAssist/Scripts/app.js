@@ -45,11 +45,11 @@
 
         var DOM = UICtrl.getDOMstrings();
         // Submit in AssetTag
-        document.querySelector("#" + DOM.assetTagSubmit).addEventListener('click', addAssetTag);
+        //document.querySelector("#" + DOM.assetTagSubmit).addEventListener('click', addAssetTag);
         // Page Navigation button AssetTag
-        document.querySelector("#" + DOM.pageNavTitleAssetTag).addEventListener('click', function (event) { UICtrl.setActivePageNav(event.target) });
+        //document.querySelector("#" + DOM.pageNavTitleAssetTag).addEventListener('click', function (event) { UICtrl.setActivePageNav(event.target) });
         // Update Label preview with active label
-        document.querySelector("#" + DOM.assetTagLabelSpot).addEventListener('input', function (event) { UICtrl.setActivePreview(event.target.value); });
+        //document.querySelector("#" + DOM.assetTagLabelSpot).addEventListener('input', function (event) { UICtrl.setActivePreview(event.target.value); });
     };
 
     return {
@@ -118,7 +118,7 @@ var StudentLabelController = (function (LabelCtrl, DBCtrl, UICtrl) {
             errArray.push("<br>- <strong>" + UICtrl.addAlertError("barcode") + "</strong> is not valid (Numeric value, 4 to 6 characters.)");
         }
 
-        if (!LabelCtrl.schoolExists(input.schoolId) || input.schoolId == 0) {
+        if (!LabelCtrl.schoolExists(input.schoolId)) {
 
             errArray.push("<br>- <strong>" + UICtrl.addAlertError("schoolId") + "</strong> is not a valid selection.");
         }
@@ -184,7 +184,7 @@ var StudentLabelController = (function (LabelCtrl, DBCtrl, UICtrl) {
 
 var controller = (function (LabelCtrl, DBCtrl, UICtrl, ImportCtrl, AssetTagCtrl, StudentLabelCtrl) {
 
-    var version = "1.3.0";
+    var version = "1.3.1";
 
     var getAPIInfo = function (callback) {
 
@@ -265,7 +265,7 @@ var controller = (function (LabelCtrl, DBCtrl, UICtrl, ImportCtrl, AssetTagCtrl,
             errArray.push("<br>- <strong>Barcode</strong> is not valid (Numeric value, 4 to 6 characters.)");
         }
 
-        if (!LabelCtrl.schoolExists(input.schoolId) || input.schoolId == 0) {
+        if (!LabelCtrl.schoolExists(input.schoolId)) {
 
             errArray.push("<br>- <strong>School</strong> is not a valid selection.");
         }

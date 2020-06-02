@@ -8,7 +8,7 @@
         var errArray = [];
         var err = "<strong>Error.</strong> There are issue(s) with the import:<br>";
 
-        if (!LabelCtrl.schoolExists(input.schoolId) || input.schoolId == 0) {
+        if (!LabelCtrl.schoolExists(input.schoolId)) {
 
             errArray.push("<br>- <strong>School</strong> is not a valid selection.");
         }

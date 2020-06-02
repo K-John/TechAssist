@@ -64,7 +64,7 @@ Namespace Controllers
         Function GetSchools()
 
             Dim schools As New List(Of SchoolModel) From {
-                New SchoolModel() With {.SchoolID = 0, .SchoolName = ""},
+                New SchoolModel() With {.SchoolID = 0, .SchoolName = "Clarksville-Montgomery Co. Schools", .SchoolAcronym = "CMCSS", .SchoolPhone = "931-648-5600"},
                 New SchoolModel() With {.SchoolID = 1, .SchoolName = "Barkers Mill Elementary", .SchoolAcronym = "BMES", .SchoolPhone = "931-906-7235"},
                 New SchoolModel() With {.SchoolID = 2, .SchoolName = "Barksdale Elementary", .SchoolAcronym = "BES", .SchoolPhone = "931-648-5685"},
                 New SchoolModel() With {.SchoolID = 3, .SchoolName = "Burt Elementary", .SchoolAcronym = "BURT", .SchoolPhone = "931-648-5630"},
