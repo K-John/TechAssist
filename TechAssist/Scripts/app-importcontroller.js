@@ -124,6 +124,7 @@
                     UICtrl.addAlert(content, true, false);
                     UICtrl.clearFields(LabelCtrl.getBiggestLabelId());
                     UICtrl.setActivePreview(parseInt(LabelCtrl.getBiggestLabelId()) + 1);
+                    loopCount = 0;
                 }
             }
         });
