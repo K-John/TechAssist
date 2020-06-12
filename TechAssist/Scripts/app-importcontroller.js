@@ -72,8 +72,12 @@
 
         for (var i = 1; dataArray.length > i; i++) {
             var field = CSVtoArray(dataArray[i]);
-            var newLabel = LabelCtrl.newLabel(schoolId, field[headers.firstName], field[headers.lastName], field[headers.barcode], (LabelCtrl.getBiggestLabelId() + i).toString());
-            labels.push(newLabel);
+
+            if (field[headers.firstName] != undefined && field[headers.lastName] != undefined && field[headers.barcode] != undefined) {
+
+                var newLabel = LabelCtrl.newLabel(schoolId, field[headers.firstName], field[headers.lastName], field[headers.barcode], (LabelCtrl.getBiggestLabelId() + i).toString());
+                labels.push(newLabel);
+            }
         }
         return labels;
     };
