@@ -184,7 +184,7 @@ var StudentLabelController = (function (LabelCtrl, DBCtrl, UICtrl) {
 
 var controller = (function (LabelCtrl, DBCtrl, UICtrl, ImportCtrl, AssetTagCtrl, StudentLabelCtrl) {
 
-    var version = "1.3.3";
+    var version = "1.3.4";
 
     var getAPIInfo = function (callback) {
 
