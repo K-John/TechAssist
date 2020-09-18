@@ -68,7 +68,8 @@
         outline: 1px solid #cacaca;
         box-shadow: 0 3px 15px #0000001f;
         padding: 40px 0;
-        min-height: 816px;
+        min-height: 960px;
+        min-width: 816px;
     }
 
     .label {
